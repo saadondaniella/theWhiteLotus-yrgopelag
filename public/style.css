@@ -1,5 +1,5 @@
 :root {
-  --backgroundColor: #f0f0f0;
+  --backgroundColor: #ededed;
   --textColorDark: #000;
   --textColorLight: #f0f0f0;
 }
@@ -16,9 +16,6 @@ body {
   font-size: 1rem;
 }
 
-p {
-  text-transform: none;
-}
 .header {
   width: 100%;
 }
@@ -205,25 +202,46 @@ p {
 
 .room-button {
   font-size: 1rem;
-  background: var(--backgroundColor);
-  color: var(--textColorDark);
+  background: var(--textColorDark);
+  color: var(--textColorLight);
   text-decoration: none;
   padding: 0.35rem 0.75rem;
   border: 1px solid var(--textColorDark);
 }
 
 .room-button:hover {
-  background: var(--textColorDark);
-  color: var(--textColorLight);
+  background: var(--backgroundColor);
+  color: var(--textColorDark);
+}
+
+.island-story {
+  max-width: 900px;
+  margin: 4rem auto 5rem;
+  padding: 0 1.5rem;
+  text-align: center;
+}
+
+.island-story-title {
+  margin: 0 0 1.5rem;
+  font-size: 1.5;
+  letter-spacing: 0.8px;
+}
+
+.island-story-text {
+  margin: 0 0 1.25rem;
+  font-size: 1rem;
+  line-height: 1.7;
+  text-transform: none;
 }
 
 .footer {
   border-top: 1px solid var(--textColorDark);
-  margin-top: 4rem;
+  max-width: 90vw;
+  margin: 1.5rem auto 0;
 }
 
 .footer-content {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 1.5rem;
   display: flex;
@@ -250,4 +268,29 @@ p {
 
 .footer-link:hover {
   text-decoration: underline;
+}
+.scrolltop {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 999;
+  width: 45px;
+  height: 45px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scrolltop img {
+  width: 35px;
+  height: 35px;
+}
+
+.scrolltop:hover {
+  background: var(--textColorDark);
+}
+
+.scrolltop:hover img {
+  filter: invert(1);
 }

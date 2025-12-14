@@ -54,30 +54,11 @@ declare(strict_types=1);
 
         <nav class="navbar" aria-label="Huvudmeny">
             <ul class="navbar-list">
-                <li class="navbar-item"><a class="navbar-text" href="#">DESTINATION</a></li>
-                <li class="navbar-item"><a class="navbar-text" href="#">ROOMS</a></li>
-                <li class="navbar-item"><a class="navbar-text" href="#">THE ISLAND</a></li>
-                <li class="navbar-item"><a class="navbar-text" href="#">CONTACT</a></li>
+                <li class="navbar-item"><a class="navbar-text" href="index.php">DESTINATION</a></li>
+                <li class="navbar-item"><a class="navbar-text" href="booking.php">ROOMS</a></li>
+                <li class="navbar-item"><a class="navbar-text" href="index.php">THE ISLAND</a></li>
+                <li class="navbar-item"><a class="navbar-text" href="index.php">CONTACT</a></li>
                 <li class="navbar-item"><a class="navbar-text" href="#">FEATURES</a></li>
             </ul>
         </nav>
     </header>
-    <section class="hero">
-        <div class="hero-content">
-            <h1 class="hero-title">WELCOME TO COZEA ISLAND</h1>
-
-            <p class="hero-text">
-                Home to the exclusive resort The White Lotus. <br>An island of beauty, secrets, and unexpected turns — where paradise reveals
-                more than you came for.<br />
-                Book, if you dare.
-            </p>
-            <a class="room-button hero-cta" href="/booking.php">
-                CHECK AVAILABLE ROOMS
-            </a>
-        </div>
-        <div class="hero-image">
-            <img
-                src="/public/pictures/island-hero.png"
-                alt="Cozea Island" />
-        </div>
-    </section>
