@@ -19,5 +19,5 @@ declare(strict_types=1); ?>
     class="scrolltop"
     id="scrollTopButton"
     aria-label="Back to top">
-    <img src="/public/pictures/lotus-icon.png" alt="lotus flower" />
+    <img src="/pictures/lotus-icon.png" alt="lotus flower" />
 </button>

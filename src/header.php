@@ -9,7 +9,7 @@ declare(strict_types=1);
 <head>
     <meta charset="UTF-8">
     <title>The White Lotus</title>
-    <link rel="stylesheet" href="/public/style.css">
+    <link rel="stylesheet" href="./public/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol&display=swap" rel="stylesheet">
@@ -22,23 +22,23 @@ declare(strict_types=1);
             <a class="header-phone" href="tel:+46735906163">
                 <img
                     class="header-phone-symbol"
-                    src="/public/pictures/phone-symbol.png"
+                    src="/pictures/phone-symbol.png"
                     alt="" />
                 <span class="header-phone-text">+46 735 906163</span>
             </a>
 
             <div class="header-icons">
                 <a class="navbar-icon" href="#" aria-label="Instagram">
-                    <img class="navbar-icon-image" src="/public/pictures/instagram-icon.png" alt="Instagram icon" />
+                    <img class="navbar-icon-image" src="/pictures/instagram-icon.png" alt="Instagram icon" />
                 </a>
                 <a class="navbar-icon" href="#" aria-label="Facebook">
-                    <img class="navbar-icon-image" src="/public/pictures/facebook-icon.png" alt="Facebook icon" />
+                    <img class="navbar-icon-image" src="/pictures/facebook-icon.png" alt="Facebook icon" />
                 </a>
                 <a class="navbar-icon" href="#" aria-label="Mail">
-                    <img class="navbar-icon-image" src="/public/pictures/mail-icon.png" alt="MAil icon" />
+                    <img class="navbar-icon-image" src="/pictures/mail-icon.png" alt="MAil icon" />
                 </a>
                 <a class="navbar-icon" href="#" aria-label="Telefon">
-                    <img class="navbar-icon-image" src="/public/pictures/phone-icon.png" alt="phone icon" />
+                    <img class="navbar-icon-image" src="/pictures/phone-icon.png" alt="phone icon" />
                 </a>
             </div>
         </div>
@@ -46,7 +46,7 @@ declare(strict_types=1);
         <div class="header-brand">
             <img
                 class="header-logo"
-                src="/public/pictures/logga.png"
+                src="/pictures/logga.png"
                 alt="The White Lotus" />
         </div>
 

@@ -7,19 +7,19 @@ $rooms = [
         'slug' => 'luxury',
         'name' => 'Luxury',
         'price' => 8,
-        'image' => '/public/pictures/room-luxury.png',
+        'image' => '/pictures/room-luxury.png',
     ],
     [
         'slug' => 'standard',
         'name' => 'Standard',
         'price' => 5,
-        'image' => '/public/pictures/room-standard.png',
+        'image' => '/pictures/room-standard.png',
     ],
     [
         'slug' => 'budget',
         'name' => 'Budget',
         'price' => 2,
-        'image' => '/public/pictures/room-budget.png',
+        'image' => '/pictures/room-budget.png',
     ],
 ];
 
@@ -66,7 +66,7 @@ require __DIR__ . '/src/header.php';
         </div>
         <div class="hero-image">
             <img
-                src="/public/pictures/island-hero.png"
+                src="/pictures/island-hero.png"
                 alt="Cozea Island" />
         </div>
     </section>
