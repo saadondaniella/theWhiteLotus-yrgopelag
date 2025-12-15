@@ -1,6 +1,8 @@
 <?php
 
 declare(strict_types=1);
+
+require_once __DIR__ . '/../config.php';
 ?>
 
 <!DOCTYPE html>
@@ -19,13 +21,19 @@ declare(strict_types=1);
 <body>
     <header class="header">
         <div class="header-top">
-            <a class="header-phone" href="tel:+46735906163">
-                <img
-                    class="header-phone-symbol"
-                    src="/pictures/phone-symbol.png"
-                    alt="" />
-                <span class="header-phone-text">+46 735 906163</span>
-            </a>
+
+            <div class="header-contact">
+
+                <div class="header-rating">
+                    <?php for ($i = 1; $i <= $maxStars; $i++) : ?>
+                        <?php if ($i <= $hotelRating) : ?>
+                            <span class="star filled">★</span>
+                        <?php else : ?>
+                            <span class="star">☆</span>
+                        <?php endif; ?>
+                    <?php endfor; ?>
+                </div>
+            </div>
 
             <div class="header-icons">
                 <a class="navbar-icon" href="#" aria-label="Instagram">
@@ -58,7 +66,7 @@ declare(strict_types=1);
                 <li class="navbar-item"><a class="navbar-text" href="booking.php">ROOMS</a></li>
                 <li class="navbar-item"><a class="navbar-text" href="index.php">THE ISLAND</a></li>
                 <li class="navbar-item"><a class="navbar-text" href="index.php">CONTACT</a></li>
-                <li class="navbar-item"><a class="navbar-text" href="#">FEATURES</a></li>
+                <li class="navbar-item"><a class="navbar-text" href="booking.php">FEATURES</a></li>
             </ul>
         </nav>
     </header>

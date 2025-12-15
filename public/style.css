@@ -2,6 +2,7 @@
   --backgroundColor: #ededed;
   --textColorDark: #000;
   --textColorLight: #f0f0f0;
+  --accentColor: #48d1cc;
 }
 
 * {
@@ -47,7 +48,20 @@ body {
   display: flex;
   gap: 1rem;
 }
+.header-rating {
+  margin-top: 4px;
+  font-size: 13px;
+}
 
+.star {
+  color: #ccc;
+  font-size: 20px;
+  margin-right: 2px;
+}
+
+.star.filled {
+  color: var(--textColorDark);
+}
 .navbar-icon {
   display: flex;
   align-items: center;
@@ -94,6 +108,10 @@ body {
 
 .navbar-item {
   margin: 0;
+}
+
+a:hover {
+  color: var(--accentColor);
 }
 
 .navbar-text {
@@ -259,7 +277,7 @@ body {
 
 .contact-block-link {
   font-size: 1rem;
-  color: var(--textColorDark);
+  color: var(--accentColor);
   text-decoration: none;
 }
 

@@ -133,6 +133,13 @@ require __DIR__ . '/src/header.php';
             <nav class="contact-block-links" aria-label="Contact links">
                 <a class="contact-block-link" href="saadondaniella@gmail.com">Email</a>
             </nav>
+            <a class="header-phone" href="tel:+46735906163">
+                <img
+                    class="header-phone-symbol"
+                    src="/pictures/phone-symbol.png"
+                    alt="" />
+                <span class="header-phone-text">+46 735 906163</span>
+            </a>
         </div>
 
         <div class="newsletter-block">
