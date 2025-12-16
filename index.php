@@ -2,26 +2,27 @@
 
 declare(strict_types=1);
 
-$rooms = [
-    [
-        'slug' => 'luxury',
-        'name' => 'Luxury',
-        'price' => 8,
-        'image' => '/pictures/room-luxury.png',
-    ],
-    [
-        'slug' => 'standard',
-        'name' => 'Standard',
-        'price' => 5,
-        'image' => '/pictures/room-standard.png',
-    ],
-    [
-        'slug' => 'budget',
-        'name' => 'Budget',
-        'price' => 2,
-        'image' => '/pictures/room-budget.png',
-    ],
+require __DIR__ . '/src/database.php';
+
+$statement = $database->query('SELECT slug, name, price_per_night FROM rooms ORDER BY price_per_night DESC');
+$roomsFromDatabase = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+$images = [
+    'luxury' => '/pictures/room-luxury.png',
+    'standard' => '/pictures/room-standard.png',
+    'budget' => '/pictures/room-budget.png',
 ];
+
+$rooms = [];
+
+foreach ($roomsFromDatabase as $room) {
+    $rooms[] = [
+        'slug' => $room['slug'],
+        'name' => $room['name'],
+        'price' => (int) $room['price_per_night'],
+        'image' => $images[$room['slug']] ?? '/pictures/room-budget.png',
+    ];
+}
 
 require __DIR__ . '/src/header.php';
 ?>
