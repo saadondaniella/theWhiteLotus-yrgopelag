@@ -12,6 +12,7 @@ require_once __DIR__ . '/../config.php';
     <meta charset="UTF-8">
     <title>The White Lotus</title>
     <link rel="stylesheet" href="./public/style.css">
+    <link rel="stylesheet" href="/public/styleContact.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol&display=swap" rel="stylesheet">
@@ -21,9 +22,7 @@ require_once __DIR__ . '/../config.php';
 <body>
     <header class="header">
         <div class="header-top">
-
             <div class="header-contact">
-
                 <div class="header-rating">
                     <?php for ($i = 1; $i <= $maxStars; $i++) : ?>
                         <?php if ($i <= $hotelRating) : ?>
@@ -65,7 +64,7 @@ require_once __DIR__ . '/../config.php';
                 <li class="navbar-item"><a class="navbar-text" href="index.php">DESTINATION</a></li>
                 <li class="navbar-item"><a class="navbar-text" href="booking.php">ROOMS</a></li>
                 <li class="navbar-item"><a class="navbar-text" href="index.php">THE ISLAND</a></li>
-                <li class="navbar-item"><a class="navbar-text" href="index.php">CONTACT</a></li>
+                <li class="navbar-item"><a class="navbar-text" href="contact.php">CONTACT</a></li>
                 <li class="navbar-item"><a class="navbar-text" href="booking.php">FEATURES</a></li>
             </ul>
         </nav>

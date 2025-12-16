@@ -62,6 +62,7 @@ body {
 .star.filled {
   color: var(--textColorDark);
 }
+
 .navbar-icon {
   display: flex;
   align-items: center;
