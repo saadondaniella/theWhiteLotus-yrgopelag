@@ -43,8 +43,9 @@ require __DIR__ . '/src/header.php';
         </div>
         <div class="hero-image">
             <img
-                src="/pictures/island-hero.png"
-                alt="Cozea Island" />
+                class="hero-image-img"
+                src="/pictures/island-hero-1.png"
+                alt="Cozea Island">
         </div>
     </section>
     <section class="rooms">
@@ -99,8 +100,3 @@ require __DIR__ . '/src/header.php';
 </main>
 
 <?php require __DIR__ . '/src/footer.php'; ?>
-
-<script src="/public/script.js"></script>
-</body>
-
-</html>

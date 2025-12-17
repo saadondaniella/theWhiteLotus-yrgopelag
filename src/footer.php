@@ -112,3 +112,7 @@ if (isset($_POST['name'], $_POST['email'])) {
     aria-label="Back to top">
     <img src="/pictures/lotus-icon.png" alt="lotus flower" />
 </button>
+<script src="/public/script.js"></script>
+</body>
+
+</html>
