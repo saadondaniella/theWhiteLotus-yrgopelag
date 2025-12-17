@@ -1,6 +1,6 @@
 :root {
   --lightGrey: rgba(239, 239, 239, 0.75);
-  --backgroundColorDark: rgba(0, 0, 0, 0.3);
+  --backgroundColorDark: #000;
   --backgroundColorLight: #e2e2e2;
   --blurry: rgba(239, 239, 239, 0.8);
   --textColorLight: #f0f0f0;
@@ -29,7 +29,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background-color: var(--backgroundColorDark);
+  background-color: rgba(0, 0, 0, 0.15);
 }
 
 .contactBox {
@@ -83,4 +83,66 @@
 
 .contact-button:hover {
   background-color: var(--accentColor);
+}
+
+.features {
+  padding: 96px 0;
+}
+
+.features-title {
+  text-align: center;
+  letter-spacing: 0.08em;
+  margin: 0 0 40px 0;
+}
+
+.features-text {
+  max-width: 720px;
+  margin: 0 auto 64px auto;
+  text-align: center;
+}
+
+.features-text p {
+  margin-bottom: 20px;
+  font-size: 1rem;
+  line-height: 1.6;
+  text-transform: none;
+}
+
+.features-grid {
+  width: 70vw;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+}
+
+.feature-card {
+  background: var(--backgroundColorLight);
+  overflow: hidden;
+}
+
+.feature-image {
+  display: block;
+  width: 100%;
+  height: 30vh;
+  object-fit: cover;
+}
+
+.features-cta {
+  display: block;
+  width: 240px;
+  height: 37px;
+  margin: 56px auto 0 auto;
+  padding: 0.35rem 0.75rem;
+  font-size: 1rem;
+  text-align: center;
+  background: var(--backgroundColorDark);
+  color: var(--textColorLight);
+  text-decoration: none;
+  border: solid 1px var(--backgroundColorDark);
+}
+
+.features-cta:hover {
+  background-color: var(--backgroundColorLight);
+  color: var(--backgroundColorDark);
 }
