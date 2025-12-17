@@ -42,7 +42,7 @@ if (isset($_POST['name'], $_POST['email'])) {
             <a class="header-phone" href="tel:+46735906163">
                 <img
                     class="header-phone-symbol"
-                    src="/pictures/phone-symbol.png"
+                    src="pictures/phone-symbol.png"
                     alt="" />
                 <span class="header-phone-text">+46 735 906163</span>
             </a>
@@ -100,7 +100,7 @@ if (isset($_POST['name'], $_POST['email'])) {
         </p>
 
         <nav class="footer-nav">
-            <a class="footer-link" href="index.php">Contact</a>
+            <a class="footer-link" href="contact.php">Contact</a>
             <a class="footer-link" href="index.php">Privacy Policy</a>
             <a class="footer-link" href="index.php">Terms & Conditions</a>
         </nav>
@@ -110,9 +110,9 @@ if (isset($_POST['name'], $_POST['email'])) {
     class="scrolltop"
     id="scrollTopButton"
     aria-label="Back to top">
-    <img src="/pictures/lotus-icon.png" alt="lotus flower" />
+    <img src="pictures/lotus-icon.png" alt="lotus flower" />
 </button>
-<script src="/public/script.js"></script>
+<script src="public/script.js"></script>
 </body>
 
 </html>

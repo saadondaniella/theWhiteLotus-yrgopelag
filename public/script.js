@@ -21,9 +21,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const images = [
-    "/pictures/island-hero-1.png",
-    "/pictures/island-hero-3.png",
-    "/pictures/TheWhiteLotusOverwiew.png",
+    "pictures/island-hero-1.png",
+    "pictures/island-hero-3.png",
+    "pictures/TheWhiteLotusOverwiew.png",
     // "/pictures/island-hero-2.png",
   ];
 

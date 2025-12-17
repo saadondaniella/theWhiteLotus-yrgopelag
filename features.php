@@ -24,23 +24,23 @@
 
     <div class="features-grid">
         <article class="feature-card">
-            <img class="feature-image" src="/pictures/feature-yatzee.png" alt="Yahtzee by the sea">
+            <img class="feature-image" src="pictures/feature-yatzee.png" alt="Yahtzee by the sea">
         </article>
 
         <article class="feature-card">
-            <img class="feature-image" src="/pictures/feature-library.png" alt="Library and fireplace">
+            <img class="feature-image" src="pictures/feature-library.png" alt="Library and fireplace">
         </article>
 
         <article class="feature-card">
-            <img class="feature-image" src="/pictures/feature-unicycle.png" alt="Unicycle ride">
+            <img class="feature-image" src="pictures/feature-unicycle.png" alt="Unicycle ride">
         </article>
 
         <article class="feature-card">
-            <img class="feature-image" src="/pictures/feature-pool.png" alt="Pool with float">
+            <img class="feature-image" src="pictures/feature-pool.png" alt="Pool with float">
         </article>
     </div>
 
-    <a class="features-cta" href="/booking.php">Book here</a>
+    <a class="features-cta" href="booking.php">Book here</a>
 </section>
 
 <?php require __DIR__ . '/src/footer.php'; ?>

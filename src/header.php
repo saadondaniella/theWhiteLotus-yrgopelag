@@ -12,7 +12,7 @@ require_once __DIR__ . '/../config.php';
     <meta charset="UTF-8">
     <title>The White Lotus</title>
     <link rel="stylesheet" href="./public/style.css">
-    <link rel="stylesheet" href="/public/style2.css">
+    <link rel="stylesheet" href="./public/style2.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol&display=swap" rel="stylesheet">
@@ -36,16 +36,16 @@ require_once __DIR__ . '/../config.php';
 
             <div class="header-icons">
                 <a class="navbar-icon" href="#" aria-label="Instagram">
-                    <img class="navbar-icon-image" src="/pictures/instagram-icon.png" alt="Instagram icon" />
+                    <img class="navbar-icon-image" src="pictures/instagram-icon.png" alt="Instagram icon" />
                 </a>
                 <a class="navbar-icon" href="#" aria-label="Facebook">
-                    <img class="navbar-icon-image" src="/pictures/facebook-icon.png" alt="Facebook icon" />
+                    <img class="navbar-icon-image" src="pictures/facebook-icon.png" alt="Facebook icon" />
                 </a>
                 <a class="navbar-icon" href="#" aria-label="Mail">
-                    <img class="navbar-icon-image" src="/pictures/mail-icon.png" alt="MAil icon" />
+                    <img class="navbar-icon-image" src="pictures/mail-icon.png" alt="MAil icon" />
                 </a>
                 <a class="navbar-icon" href="#" aria-label="Telefon">
-                    <img class="navbar-icon-image" src="/pictures/phone-icon.png" alt="phone icon" />
+                    <img class="navbar-icon-image" src="pictures/phone-icon.png" alt="phone icon" />
                 </a>
             </div>
         </div>
@@ -53,7 +53,7 @@ require_once __DIR__ . '/../config.php';
         <div class="header-brand">
             <img
                 class="header-logo"
-                src="/pictures/logga.png"
+                src="pictures/logga.png"
                 alt="The White Lotus" />
         </div>
 

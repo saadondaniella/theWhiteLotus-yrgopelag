@@ -8,9 +8,9 @@ $statement = $database->query('SELECT slug, name, price_per_night FROM rooms ORD
 $roomsFromDatabase = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 $images = [
-    'luxury' => '/pictures/room-luxury.png',
-    'standard' => '/pictures/room-standard.png',
-    'budget' => '/pictures/room-budget.png',
+    'luxury' => 'pictures/room-luxury.png',
+    'standard' => 'pictures/room-standard.png',
+    'budget' => 'pictures/room-budget.png',
 ];
 
 $rooms = [];
@@ -20,7 +20,7 @@ foreach ($roomsFromDatabase as $room) {
         'slug' => $room['slug'],
         'name' => $room['name'],
         'price' => (int) $room['price_per_night'],
-        'image' => $images[$room['slug']] ?? '/pictures/room-budget.png',
+        'image' => $images[$room['slug']] ?? 'pictures/room-budget.png',
     ];
 }
 
@@ -44,7 +44,7 @@ require __DIR__ . '/src/header.php';
         <div class="hero-image">
             <img
                 class="hero-image-img"
-                src="/pictures/island-hero-1.png"
+                src="pictures/island-hero-1.png"
                 alt="Cozea Island">
         </div>
     </section>
@@ -98,6 +98,5 @@ require __DIR__ . '/src/header.php';
         </p>
     </article>
 </main>
-
 
 <?php require __DIR__ . '/src/footer.php'; ?>
