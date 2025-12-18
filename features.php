@@ -17,10 +17,13 @@
         <p>But Cozea Island is not about choosing from a list. It’s about curiosity.</p>
 
         <p>
-            Ask for what you seek.
-            Or, if you’re feeling brave — let us surprise you.
+            Ask for what you seek.<br>
+            You can send a message in the contact page if your seeking something else than what's offers on the booking page.
         </p>
+
+        <a class="features-cta" href="contact.php">send request</a>
     </div>
+
 
     <div class="features-grid">
         <article class="feature-card">
