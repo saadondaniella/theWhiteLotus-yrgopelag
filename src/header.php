@@ -13,6 +13,7 @@ require_once __DIR__ . '/../config.php';
     <title>The White Lotus</title>
     <link rel="stylesheet" href="./public/style.css">
     <link rel="stylesheet" href="./public/style2.css">
+    <link rel="stylesheet" href="./public/styleB.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol&display=swap" rel="stylesheet">

@@ -1,0 +1,41 @@
+.booking {
+  width: 95vw;
+  margin: 0 auto;
+  padding: 60px 0;
+}
+
+.booking-title {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.booking-rooms-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.booking-room-card {
+  border: 1px solid #999;
+  padding: 20px;
+  background: #f5f5f5;
+}
+
+.booking-room-image {
+  border: 1px solid #999;
+  padding: 10px;
+  background: white;
+}
+
+.booking-room-name {
+  font-size: 1.5rem;
+}
+
+.booking-room-text,
+.booking-room-features {
+  text-transform: none;
+}
+.booking-room-image img {
+  width: 100%;
+  display: block;
+}
