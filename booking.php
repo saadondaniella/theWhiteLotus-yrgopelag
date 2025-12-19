@@ -4,23 +4,15 @@ declare(strict_types=1);
 
 $roomContent = [
     'luxury' => [
-        'text' => 'If you want to go all in and treat yourself to the 
-ultimate overnight stay, this is the style to choose. 
-Effortless luxury, calming details, and a seamless flow 
-between room, pool, and ocean create an unforgettable 
-stay.',
+        'text' => 'This is the ultimate overnight stay. Effortless luxury, calming details, and a seamless flow between room and ocean. You could save money — or you could be happy. Don’t be cheap. Book it. Your health is at stake. There may or may not be a freezer full of ice cream. Do not forget to add pool in the features.',
         'bullets' => [
             'Total Area 191 sqm',
             'Indoor/outdoor showers',
-            'Private pool with cabana',
+            'Your own massage therapist',
         ],
     ],
     'standard' => [
-        'text' => 'Inspired by oriental elegance, this room blends rich 
-colors, handcrafted details, and natural textures. 
-Warm tones, soft fabrics, and hints of wood and spices 
-create a cozy, sensory atmosphere — like stepping into 
-a tranquil retreat scented by nature and sea air.',
+        'text' => 'Inspired by oriental elegance, rich textures, and calming tones, this room is designed for slowing down properly. Candles, shadows, and the comforting feeling that you’re exactly where you should be. You could book something simpler — but why would you? This room knows things about you.',
         'bullets' => [
             'Total Area 80 sqm',
             'Own porch to the ocean',
@@ -28,11 +20,8 @@ a tranquil retreat scented by nature and sea air.',
         ],
     ],
     'budget' => [
-        'text' => 'Perfect if you want comfort, views, and that island 
-feeling — without going all in. Clean, airy, and calm, 
-with front-row access to turquoise waters and 
-palm-lined beaches. A smart choice that still delivers 
-a stay you’ll love (and want to book fast).',
+        'text' => 'Perfect if you want comfort, views, and that island feeling — without going all in. Clean, airy, and calm, 
+with front-row access to turquoise waters and palm-lined beaches. A smart choice that still delivers a stay you’ll love (and want to book fast).',
         'bullets' => [
             'Total Area 40 sqm',
             'Own porch to the ocean',
@@ -51,6 +40,40 @@ $successMessage = null;
 $roomsStatement = $database->query('SELECT id, slug, name, price_per_night FROM rooms ORDER BY price_per_night DESC');
 $rooms = $roomsStatement->fetchAll(PDO::FETCH_ASSOC);
 
+$statement = $database->prepare(
+    'SELECT room_id, arrival_date, departure_date
+     FROM bookings
+     WHERE arrival_date <= :endDate
+       AND departure_date >= :startDate'
+);
+
+$statement->execute([
+    ':startDate' => '2026-01-01',
+    ':endDate' => '2026-01-31',
+]);
+
+$bookings = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+$bookedDaysByRoomId = [];
+
+foreach ($bookings as $booking) {
+    $roomId = (int) $booking['room_id'];
+
+    $arrival = new DateTime($booking['arrival_date']);
+    $departure = new DateTime($booking['departure_date']);
+
+    $departure->modify('-1 day');
+
+    $current = clone $arrival;
+
+    while ($current <= $departure) {
+        if ($current->format('Y-m') === '2026-01') {
+            $dayNumber = (int) $current->format('j');
+            $bookedDaysByRoomId[$roomId][$dayNumber] = true;
+        }
+        $current->modify('+1 day');
+    }
+}
 ?>
 
 <main class="booking">
@@ -92,8 +115,27 @@ $rooms = $roomsStatement->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </section>
 
-</main>
+    <div class="availability-grid-outer">
+        <section class="availability">
+            <h2 class="availability-heading">CHECK OUT AVAILABILITY</h2>
 
+            <div class="availability-grid-outer">
+                <?php foreach ($rooms as $room): ?>
+                    <?php
+                    $roomId = (int) $room['id'];
+                    $title = strtoupper((string) $room['slug']) . ' - JAN 2026';
+
+                    renderJanuaryCalendar(
+                        $roomId,
+                        $bookedDaysByRoomId,
+                        $title
+                    );
+                    ?>
+                <?php endforeach; ?>
+            </div>
+        </section>
+    </div>
+</main>
 <?php
 
 $featuresStatement = $database->query('SELECT id, name, cost FROM features WHERE is_active = 1 ORDER BY cost ASC');

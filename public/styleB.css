@@ -1,3 +1,10 @@
+:root {
+  --background-color: #ededed;
+  --border: #999;
+  --accentColor: #48d1cc;
+  --avalibleRoom: #e6e6e6;
+}
+
 .booking {
   width: 95vw;
   margin: 0 auto;
@@ -16,26 +23,123 @@
 }
 
 .booking-room-card {
-  border: 1px solid #999;
+  border: 1px solid var(--border);
   padding: 20px;
-  background: #f5f5f5;
+  background: var(--background-color);
 }
 
 .booking-room-image {
-  border: 1px solid #999;
+  border: 1px solid var(--border);
   padding: 10px;
   background: white;
 }
 
 .booking-room-name {
   font-size: 1.5rem;
+  margin-left: 5%;
 }
 
 .booking-room-text,
 .booking-room-features {
   text-transform: none;
+  margin-left: 5%;
 }
+
 .booking-room-image img {
   width: 100%;
   display: block;
+}
+
+.availability {
+  width: 95vw;
+  margin: 0 auto;
+  padding: 60px 0;
+}
+
+.availability-heading {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.availability-grid-outer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  align-items: start;
+  width: 95vw;
+  margin: 0 auto;
+}
+
+.availability-card {
+  border: 1px solid var(--border);
+  padding: 18px;
+  background: #f6f6f6;
+}
+
+.availability-title {
+  text-align: center;
+  margin-bottom: 10%;
+}
+
+.availability-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  opacity: 0.85;
+  text-align: center;
+}
+
+.availability-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.day {
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.day--booked {
+  background: var(--accentColor);
+}
+
+.day--available {
+  background: var(--avalibleRoom);
+}
+
+.day--empty {
+  background: transparent;
+  border: none;
+}
+
+.availability-legend {
+  display: flex;
+  gap: 14px;
+  margin-top: 14px;
+  align-items: center;
+  font-size: 1rem;
+}
+
+.legend-box {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #ddd;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+.legend-box--booked {
+  background: var(--accentColor);
+}
+
+.legend-box--available {
+  background: var(--avalibleRoom);
 }
