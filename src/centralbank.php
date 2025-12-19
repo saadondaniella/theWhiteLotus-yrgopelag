@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-const CENTRALBANK_BASE_URL = 'https://yrgopelag.se/centralbank';
+const CENTRALBANK_BASE_URL = 'https://yrgopelag.se/';
 
 function centralbankPost(string $endpoint, array $payload): array
 {
@@ -40,7 +40,7 @@ function centralbankPost(string $endpoint, array $payload): array
         return [
             'ok' => false,
             'status' => $statusCode,
-            'error' => 'Central bank returned invalid JSON.',
+            'error' => 'Central bank returned invalid JSON (status ' . $statusCode . '). Raw response: ' . substr($raw, 0, 500) . '...',
             'data' => $raw,
         ];
     }
@@ -57,7 +57,7 @@ function centralbankPost(string $endpoint, array $payload): array
 
 function centralbankValidateTransferCode(string $transferCode, int $totalCost): array
 {
-    return centralbankPost('/transferCode', [
+    return centralbankPost('/centralbank/transferCode', [
         'transferCode' => $transferCode,
         'totalCost' => $totalCost,
     ]);
@@ -65,7 +65,7 @@ function centralbankValidateTransferCode(string $transferCode, int $totalCost): 
 
 function centralbankDeposit(string $hotelOwnerUser, string $transferCode): array
 {
-    return centralbankPost('/deposit', [
+    return centralbankPost('/centralbank/deposit', [
         'user' => $hotelOwnerUser,
         'transferCode' => $transferCode,
     ]);
@@ -80,7 +80,7 @@ function centralbankSendReceipt(
     array $featuresUsed,
     int $starRating
 ): array {
-    return centralbankPost('/receipt', [
+    return centralbankPost('/centralbank/receipt', [
         'user' => $user,
         'api_key' => $apiKey,
         'guest_name' => $guestName,

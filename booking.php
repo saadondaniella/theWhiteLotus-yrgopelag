@@ -33,6 +33,7 @@ with front-row access to turquoise waters and palm-lined beaches. A smart choice
 require_once __DIR__ . '/src/database.php';
 require_once __DIR__ . '/src/functions.php';
 require_once __DIR__ . '/src/header.php';
+require_once __DIR__ . '/src/centralbank.php';
 
 $errors = [];
 $successMessage = null;
@@ -138,7 +139,7 @@ foreach ($bookings as $booking) {
 </main>
 <?php
 
-$featuresStatement = $database->query('SELECT id, name, cost FROM features WHERE is_active = 1 ORDER BY cost ASC');
+$featuresStatement = $database->query('SELECT id, name, cost, activity, tier FROM features WHERE is_active = 1 ORDER BY cost ASC');
 $features = $featuresStatement->fetchAll(PDO::FETCH_ASSOC);
 
 $arrivalDate = '2026-01-01';
@@ -149,11 +150,12 @@ $selectedFeatureIds = [];
 $totalCost = null;
 $nights = null;
 
-if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_POST['departure_date'])) {
+if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_POST['departure_date'], $_POST['transfer_code'])) {
     $guestName = trim((string) $_POST['guest_name']);
     $roomSlug = (string) $_POST['room_slug'];
     $arrivalDate = (string) $_POST['arrival_date'];
     $departureDate = (string) $_POST['departure_date'];
+    $transferCode = trim((string) $_POST['transfer_code']);
 
     if (isset($_POST['features']) && is_array($_POST['features'])) {
         $selectedFeatureIds = array_map('intval', $_POST['features']);
@@ -226,6 +228,14 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
     }
 
     if ($errors === [] && $selectedRoom !== null && $totalCost !== null) {
+        $validation = centralbankValidateTransferCode($transferCode, $totalCost);
+
+        if (!$validation['ok']) {
+            $errors[] = 'Invalid transfer code: ' . ($validation['error'] ?? 'Unknown error');
+        }
+    }
+
+    if ($errors === [] && $selectedRoom !== null && $totalCost !== null) {
         $database->beginTransaction();
 
         try {
@@ -239,7 +249,7 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
                 ':guest_name' => $guestName,
                 ':arrival_date' => $arrivalDate,
                 ':departure_date' => $departureDate,
-                ':transfer_code' => null,
+                ':transfer_code' => $transferCode,
                 ':total_cost' => $totalCost,
                 ':created_at' => date('c'),
             ]);
@@ -261,7 +271,30 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
             }
 
             $database->commit();
-            $successMessage = 'Booking saved! (Next step later: central bank payment)';
+
+            // Send receipt
+            $featuresUsed = [];
+            foreach ($features as $feature) {
+                if (in_array((int) $feature['id'], $selectedFeatureIds, true)) {
+                    $featuresUsed[] = ['activity' => $feature['activity'], 'tier' => $feature['tier']];
+                }
+            }
+
+            $receipt = centralbankSendReceipt(
+                $hotelOwnerUser,
+                $centralBankApiKey,
+                $guestName,
+                $arrivalDate,
+                $departureDate,
+                $featuresUsed,
+                $hotelRating
+            );
+
+            if (!$receipt['ok']) {
+                // Log error but don't fail booking
+            }
+
+            $successMessage = 'Booking confirmed and payment processed!';
         } catch (Throwable $e) {
             $database->rollBack();
             $errors[] = 'Could not save booking.';
