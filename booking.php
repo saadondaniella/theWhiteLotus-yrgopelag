@@ -272,7 +272,7 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
 
             $database->commit();
 
-            // Send receipt
+
             $featuresUsed = [];
             foreach ($features as $feature) {
                 if (in_array((int) $feature['id'], $selectedFeatureIds, true)) {
@@ -291,97 +291,143 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
             );
 
             if (!$receipt['ok']) {
-                // Log error but don't fail booking
             }
-
-            $successMessage = 'Booking confirmed and payment processed!';
         } catch (Throwable $e) {
-            $database->rollBack();
+            if ($database->inTransaction()) {
+                $database->rollBack();
+            }
             $errors[] = 'Could not save booking.';
         }
     }
-}
 
+    // Send receipt after transaction
+    if (isset($bookingId)) {
+        $featuresUsed = [];
+        foreach ($features as $feature) {
+            if (in_array((int) $feature['id'], $selectedFeatureIds, true)) {
+                $featuresUsed[] = ['activity' => $feature['activity'], 'tier' => $feature['tier']];
+            }
+        }
+
+        $receipt = centralbankSendReceipt(
+            $hotelOwnerUser,
+            $centralBankApiKey,
+            $guestName,
+            $arrivalDate,
+            $departureDate,
+            $featuresUsed,
+            $hotelRating
+        );
+
+        if (!$receipt['ok']) {
+            // Log error but don't fail booking
+        }
+
+        $successMessage = 'Booking confirmed and payment processed!';
+    }
+}
 ?>
 
-<main>
-    <h2>Book a room</h>
-        <p>Check-in 15:00 · Check-out 11:00 · January 2026</p>
+<main class="booking-hero">
+    <div class="booking-inner">
+        <section class="booking-card" id="booking">
+            <header class="booking-header">
+                <h2 id="booking-title" class="booking-title">Book a room</h2>
+                <p class="booking-subtitle">Check-in 15:00 · Check-out 11:00 · January 2026</p>
+            </header>
 
-        <?php if ($successMessage !== null) : ?>
-            <p role="status"><?= escapeHtml($successMessage) ?></p>
-        <?php endif; ?>
+            <?php if ($successMessage !== null) : ?>
+                <p role="status" class="notice notice-success"><?= escapeHtml($successMessage) ?></p>
+            <?php endif; ?>
 
-        <?php if ($errors !== []) : ?>
-            <ul role="alert">
-                <?php foreach ($errors as $error) : ?>
-                    <li><?= escapeHtml($error) ?></li>
-                <?php endforeach; ?>
-            </ul>
-        <?php endif; ?>
-
-        <form method="post" action="booking.php">
-            <label>
-                Guest name
-                <input type="text" name="guest_name" required
-                    value="<?= isset($_POST['guest_name']) ? escapeHtml((string) $_POST['guest_name']) : '' ?>">
-            </label>
-            <label>
-                Transfer code
-                <input
-                    type="text"
-                    name="transfer_code"
-                    placeholder="xxxx-xxxx-xxxx"
-                    required>
-            </label>
-
-            <label>
-                Room
-                <select name="room_slug" required>
-                    <option value="">Choose a room</option>
-                    <?php foreach ($rooms as $room) : ?>
-                        <option value="<?= escapeHtml((string) $room['slug']) ?>"
-                            <?= ((string) $room['slug'] === $roomSlug) ? 'selected' : '' ?>>
-                            <?= escapeHtml((string) $room['name']) ?> (<?= (int) $room['price_per_night'] ?> €/night)
-                        </option>
+            <?php if ($errors !== []) : ?>
+                <ul role="alert" class="notice notice-error">
+                    <?php foreach ($errors as $error) : ?>
+                        <li><?= escapeHtml($error) ?></li>
                     <?php endforeach; ?>
-                </select>
-            </label>
+                </ul>
+            <?php endif; ?>
 
-            <label>
-                Arrival date
-                <input type="date" name="arrival_date" required min="2026-01-01" max="2026-01-31"
-                    value="<?= escapeHtml($arrivalDate) ?>">
-            </label>
-
-            <label>
-                Departure date
-                <input type="date" name="departure_date" required min="2026-01-01" max="2026-01-31"
-                    value="<?= escapeHtml($departureDate) ?>">
-            </label>
-
-            <fieldset>
-                <legend>Features (optional)</legend>
-
-                <?php foreach ($features as $feature) : ?>
-                    <?php $id = (int) $feature['id']; ?>
-                    <label>
-                        <input type="checkbox" name="features[]" value="<?= $id ?>"
-                            <?= in_array($id, $selectedFeatureIds, true) ? 'checked' : '' ?>>
-                        <?= escapeHtml((string) $feature['name']) ?> (<?= (int) $feature['cost'] ?> €)
+            <form method="post" action="booking.php#booking" class="booking-form">
+                <div class="booking-grid">
+                    <label class="field">
+                        <span class="field-label">Guest name</span>
+                        <input class="field-control" type="text" name="guest_name" required
+                            value="<?= isset($_POST['guest_name']) ? escapeHtml((string) $_POST['guest_name']) : '' ?>">
                     </label>
-                    <br>
-                <?php endforeach; ?>
-            </fieldset>
 
-            <button type="submit">Save booking</button>
-        </form>
+                    <label class="field">
+                        <span class="field-label">Transfer code</span>
+                        <input class="field-control" type="text" name="transfer_code" placeholder="xxxx-xxxx-xxxx" required>
+                    </label>
 
-        <?php if ($totalCost !== null && $nights !== null) : ?>
-            <h2>Summary</h2>
-            <p>Nights: <?= (int) $nights ?></p>
-            <p>Total cost: <?= (int) $totalCost ?> €</p>
-        <?php endif; ?>
+                    <label class="field field-full">
+                        <span class="field-label">Room</span>
+                        <select class="field-control" name="room_slug" required>
+                            <option value="">Choose a room</option>
+                            <?php foreach ($rooms as $room) : ?>
+                                <option value="<?= escapeHtml((string) $room['slug']) ?>"
+                                    <?= ((string) $room['slug'] === $roomSlug) ? 'selected' : '' ?>>
+                                    <?= escapeHtml((string) $room['name']) ?> (<?= (int) $room['price_per_night'] ?> €/night)
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </label>
+
+                    <label class="field">
+                        <span class="field-label">Arrival date</span>
+                        <input class="field-control" type="date" name="arrival_date" required min="2026-01-01" max="2026-01-31"
+                            value="<?= escapeHtml($arrivalDate) ?>">
+                    </label>
+
+                    <label class="field">
+                        <span class="field-label">Departure date</span>
+                        <input class="field-control" type="date" name="departure_date" required min="2026-01-01" max="2026-01-31"
+                            value="<?= escapeHtml($departureDate) ?>">
+                    </label>
+                </div>
+
+                <div class="features1">
+                    <h3 class="features1-title">Add features for your stay</h3>
+
+                    <div class="features1-grid">
+                        <?php foreach ($features as $feature) : ?>
+                            <?php $id = (int) $feature['id']; ?>
+                            <label class="features1-item">
+                                <input class="features1-checkbox" type="checkbox" name="features[]" value="<?= $id ?>"
+                                    <?= in_array($id, $selectedFeatureIds, true) ? 'checked' : '' ?>>
+                                <span class="features1-text">
+                                    <?= escapeHtml((string) $feature['name']) ?>
+                                    <span class="features1-price">(<?= (int) $feature['cost'] ?> €)</span>
+                                </span>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn-primary" type="submit">Save booking</button>
+                </div>
+            </form>
+
+            <?php if ($totalCost !== null && $nights !== null) : ?>
+                <section class="summary" aria-label="Booking summary">
+                    <h3 class="summary-title">Summary</h3>
+                    <dl class="summary-list">
+                        <div class="summary-row">
+                            <dt>Nights</dt>
+                            <dd><?= (int) $nights ?></dd>
+                        </div>
+                        <div class="summary-row">
+                            <dt>Total cost</dt>
+                            <dd><?= (int) $totalCost ?> €</dd>
+                        </div>
+                    </dl>
+                </section>
+            <?php endif; ?>
+        </section>
+    </div>
 </main>
+
 
 <?php require __DIR__ . '/src/footer.php'; ?>
