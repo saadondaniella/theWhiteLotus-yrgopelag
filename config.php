@@ -6,4 +6,4 @@ $hotelRating = 3;
 $maxStars = 5;
 
 $hotelOwnerUser = 'daniella';
-$centralBankApiKey = 'REMOVED';
+$centralBankApiKey = getenv('API_KEY');
