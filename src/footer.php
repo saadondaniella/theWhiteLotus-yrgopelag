@@ -37,7 +37,7 @@ if (isset($_POST['name'], $_POST['email'])) {
             </p>
 
             <nav class="contact-block-links" aria-label="Contact links">
-                <a class="contact-block-link" href="saadondaniella@gmail.com">Email</a>
+                <a class="contact-block-link" href="mailto:saadondaniella@gmail.com">Email</a>
             </nav>
             <a class="header-phone" href="tel:+46735906163">
                 <img

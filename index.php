@@ -37,7 +37,7 @@ require __DIR__ . '/src/header.php';
                 more than you came for.<br />
                 Book, if you dare.
             </p>
-            <a class="room-button hero-cta" href="/booking.php">
+            <a class="room-button hero-cta" href="booking.php">
                 CHECK AVAILABLE ROOMS
             </a>
         </div>
@@ -64,7 +64,7 @@ require __DIR__ . '/src/header.php';
                             <?= strtoupper($room['name']); ?> <?= $room['price']; ?>€
                         </p>
 
-                        <a class="room-button" href="/booking.php?room=<?= $room['slug']; ?>">
+                        <a class="room-button" href="booking.php?room=<?= $room['slug']; ?>">
                             BOOK HERE
                         </a>
                     </div>

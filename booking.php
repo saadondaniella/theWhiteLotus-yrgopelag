@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 $roomContent = [
     'luxury' => [
         'text' => 'This is the ultimate overnight stay. Effortless luxury, calming details, and a seamless flow between room and ocean. You could save money — or you could be happy. Don’t be cheap. Book it. Your health is at stake. There may or may not be a freezer full of ice cream. Do not forget to add pool in the features.',
@@ -271,6 +274,7 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
             }
 
             $database->commit();
+            $successMessage = 'Booking confirmed and payment processed!';
 
 
             $featuresUsed = [];
@@ -290,8 +294,8 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
                 $hotelRating
             );
 
-            if (!$receipt['ok']) {
-            }
+            // if (!$receipt['ok']) {
+            // }
         } catch (Throwable $e) {
             if ($database->inTransaction()) {
                 $database->rollBack();
@@ -300,31 +304,29 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
         }
     }
 
-    // Send receipt after transaction
-    if (isset($bookingId)) {
-        $featuresUsed = [];
-        foreach ($features as $feature) {
-            if (in_array((int) $feature['id'], $selectedFeatureIds, true)) {
-                $featuresUsed[] = ['activity' => $feature['activity'], 'tier' => $feature['tier']];
-            }
-        }
+    // if (isset($bookingId)) {
+    //     $featuresUsed = [];
+    //     foreach ($features as $feature) {
+    //         if (in_array((int) $feature['id'], $selectedFeatureIds, true)) {
+    //             $featuresUsed[] = ['activity' => $feature['activity'], 'tier' => $feature['tier']];
+    //         }
+    //     }
 
-        $receipt = centralbankSendReceipt(
-            $hotelOwnerUser,
-            $centralBankApiKey,
-            $guestName,
-            $arrivalDate,
-            $departureDate,
-            $featuresUsed,
-            $hotelRating
-        );
+    //     $receipt = centralbankSendReceipt(
+    //         $hotelOwnerUser,
+    //         $centralBankApiKey,
+    //         $guestName,
+    //         $arrivalDate,
+    //         $departureDate,
+    //         $featuresUsed,
+    //         $hotelRating
+    //     );
 
-        if (!$receipt['ok']) {
-            // Log error but don't fail booking
-        }
+    //     if (!$receipt['ok']) {
+    //     }
 
-        $successMessage = 'Booking confirmed and payment processed!';
-    }
+    //     $successMessage = 'Booking confirmed and payment processed!';
+    // }
 }
 ?>
 
