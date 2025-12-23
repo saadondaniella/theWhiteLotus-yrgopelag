@@ -15,5 +15,5 @@ if (file_exists(__DIR__ . '/.env')) {
 $hotelRating = 3;
 $maxStars = 5;
 
-$hotelOwnerUser = 'daniella';
+$hotelOwnerUser = 'Daniella';
 $centralBankApiKey = getenv('API_KEY');

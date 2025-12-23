@@ -2,3 +2,4 @@
 storage/
 *.sqlite
 .DS_Store
+storage/centralbank_raw_response.log

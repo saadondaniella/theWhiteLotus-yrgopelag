@@ -25,10 +25,10 @@ $features = [
     ['wheels', 'basic', 'bicycle', 5, 0],
     ['wheels', 'premium', 'trike', 10, 0],
     ['wheels', 'superior', 'four-wheeled motorized beast', 17, 0],
-    ['rituals', 'economy', 'sunrise tea ceremony', 2, 0],
-    ['rituals', 'basic', 'guidedsilence meditation hour', 5, 0],
-    ['rituals', 'premium', 'library and fireplace', 10, 1],
-    ['rituals', 'superior', 'midnight lantern procession', 17, 0],
+    ['hotel-specific', 'economy', 'sunrise tea ceremony', 2, 0],
+    ['hotel-specific', 'basic', 'guidedsilence meditation hour', 5, 0],
+    ['hotel-specific', 'premium', 'library and fireplace', 10, 1],
+    ['hotel-specific', 'superior', 'midnight lantern procession', 17, 0],
 ];
 
 $insert = $database->prepare(

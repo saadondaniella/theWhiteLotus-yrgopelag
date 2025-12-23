@@ -243,9 +243,9 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
 
         try {
             $insertBooking = $database->prepare('
-                INSERT INTO bookings (room_id, guest_name, arrival_date, departure_date, transfer_code, total_cost, created_at)
-                VALUES (:room_id, :guest_name, :arrival_date, :departure_date, :transfer_code, :total_cost, :created_at)
-                ');
+            INSERT INTO bookings (room_id, guest_name, arrival_date, departure_date, transfer_code, total_cost, created_at)
+            VALUES (:room_id, :guest_name, :arrival_date, :departure_date, :transfer_code, :total_cost, :created_at)
+        ');
 
             $insertBooking->execute([
                 ':room_id' => (int) $selectedRoom['id'],
@@ -263,7 +263,7 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
                 $insertFeature = $database->prepare('
                 INSERT INTO booking_features (booking_id, feature_id)
                 VALUES (:booking_id, :feature_id)
-                ');
+            ');
 
                 foreach ($selectedFeatureIds as $featureId) {
                     $insertFeature->execute([
@@ -273,20 +273,19 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
                 }
             }
 
-            $database->commit();
-            $successMessage = 'Booking confirmed and payment processed!';
-
-
             $featuresUsed = [];
             foreach ($features as $feature) {
                 if (in_array((int) $feature['id'], $selectedFeatureIds, true)) {
-                    $featuresUsed[] = ['activity' => $feature['activity'], 'tier' => $feature['tier']];
+                    $featuresUsed[] = [
+                        'activity' => (string) $feature['activity'],
+                        'tier' => (string) $feature['tier'],
+                    ];
                 }
             }
 
             $receipt = centralbankSendReceipt(
                 $hotelOwnerUser,
-                $centralBankApiKey,
+                (string) $centralBankApiKey,
                 $guestName,
                 $arrivalDate,
                 $departureDate,
@@ -294,39 +293,32 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
                 $hotelRating
             );
 
-            // if (!$receipt['ok']) {
-            // }
+            if (!$receipt['ok']) {
+                error_log('Receipt failed (non-blocking): ' . ($receipt['error'] ?? 'Unknown error'));
+            }
+
+
+            error_log('HOTEL OWNER USER=' . $hotelOwnerUser);
+            error_log('API KEY SET=' . (string) (int) ($centralBankApiKey !== false && $centralBankApiKey !== ''));
+
+
+            $deposit = centralbankDeposit($hotelOwnerUser, (string) $centralBankApiKey, $transferCode);
+
+
+            if (!$deposit['ok']) {
+                throw new RuntimeException('Deposit failed: ' . (($deposit['error'] ?? 'Unknown error')));
+            }
+
+            $database->commit();
+            $successMessage = 'Booking confirmed and payment processed!';
         } catch (Throwable $e) {
             if ($database->inTransaction()) {
                 $database->rollBack();
             }
-            $errors[] = 'Could not save booking.';
+
+            $errors[] = 'Could not save booking: ' . $e->getMessage();
         }
     }
-
-    // if (isset($bookingId)) {
-    //     $featuresUsed = [];
-    //     foreach ($features as $feature) {
-    //         if (in_array((int) $feature['id'], $selectedFeatureIds, true)) {
-    //             $featuresUsed[] = ['activity' => $feature['activity'], 'tier' => $feature['tier']];
-    //         }
-    //     }
-
-    //     $receipt = centralbankSendReceipt(
-    //         $hotelOwnerUser,
-    //         $centralBankApiKey,
-    //         $guestName,
-    //         $arrivalDate,
-    //         $departureDate,
-    //         $featuresUsed,
-    //         $hotelRating
-    //     );
-
-    //     if (!$receipt['ok']) {
-    //     }
-
-    //     $successMessage = 'Booking confirmed and payment processed!';
-    // }
 }
 ?>
 

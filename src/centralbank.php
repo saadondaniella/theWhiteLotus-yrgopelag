@@ -22,6 +22,7 @@ function centralbankPost(string $endpoint, array $payload): array
                 'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
             ],
             'timeout' => 10,
+            'http_errors' => false,
         ]);
 
         $statusCode = $response->getStatusCode();
@@ -30,6 +31,15 @@ function centralbankPost(string $endpoint, array $payload): array
         $data = json_decode($raw, true);
 
         if (!is_array($data)) {
+            $logDir = __DIR__ . '/../storage';
+            if (is_dir($logDir) && is_writable($logDir)) {
+                file_put_contents(
+                    $logDir . '/centralbank_raw_response.log',
+                    date('c') . "\nStatus: $statusCode\nURL: $url\nPayload: " . json_encode($payload) . "\nRaw response: $raw\n\n",
+                    FILE_APPEND
+                );
+            }
+
             return [
                 'ok' => false,
                 'status' => $statusCode,
@@ -67,10 +77,11 @@ function centralbankValidateTransferCode(string $transferCode, int $totalCost): 
     ]);
 }
 
-function centralbankDeposit(string $hotelOwnerUser, string $transferCode): array
+function centralbankDeposit(string $hotelOwnerUser, string $apiKey, string $transferCode): array
 {
     return centralbankPost('deposit', [
         'user' => $hotelOwnerUser,
+        'api_key' => $apiKey,
         'transferCode' => $transferCode,
     ]);
 }
@@ -93,4 +104,28 @@ function centralbankSendReceipt(
         'features_used' => $featuresUsed,
         'star_rating' => $starRating,
     ]);
+}
+
+function centralbankRegisterIsland(
+    string $islandName,
+    string $hotelName,
+    string $url,
+    int $stars,
+    string $user,
+    string $apiKey,
+    string $hotelSpecificName,
+    array $featuresByActivityAndTier
+): array {
+    $payload = [
+        'islandName' => $islandName,
+        'hotelName' => $hotelName,
+        'url' => $url,
+        'stars' => $stars,
+        'user' => $user,
+        'api_key' => $apiKey,
+        'hotel_specific_name' => $hotelSpecificName,
+        'features' => $featuresByActivityAndTier,
+    ];
+
+    return centralbankPost('islands', $payload);
 }
