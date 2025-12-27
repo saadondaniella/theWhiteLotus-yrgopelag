@@ -20,6 +20,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
+  margin-top: 5%;
 }
 
 .booking-room-card {
@@ -178,7 +179,7 @@
 
 .booking-subtitle {
   font-size: 1rem;
-  margin-top: 0.5rem;
+  margin-top: 4%;
   opacity: 0.7;
 }
 
