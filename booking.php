@@ -40,6 +40,9 @@ require_once __DIR__ . '/src/centralbank.php';
 
 $errors = [];
 $successMessage = null;
+if (isset($_GET['success'])) {
+    $successMessage = 'Booking confirmed! Enjoy your stay on Cozea Island 🌴';
+}
 
 $roomsStatement = $database->query('SELECT id, slug, name, price_per_night FROM rooms ORDER BY price_per_night DESC');
 $rooms = $roomsStatement->fetchAll(PDO::FETCH_ASSOC);
@@ -234,7 +237,13 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
         $validation = centralbankValidateTransferCode($transferCode, $totalCost);
 
         if (!$validation['ok']) {
-            $errors[] = 'Invalid transfer code: ' . ($validation['error'] ?? 'Unknown error');
+            $errorText = (string) ($validation['error'] ?? 'Unknown error');
+
+            if (str_contains($errorText, 'Could not reach central bank') || str_contains($errorText, 'cURL error')) {
+                $errors[] = 'The Central Bank is not responding right now. Please wait a few seconds and try again.';
+            } else {
+                $errors[] = 'Transfer code validation failed: ' . $errorText;
+            }
         }
     }
 
@@ -294,9 +303,8 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
             );
 
             if (!$receipt['ok']) {
-                error_log('Receipt failed (non-blocking): ' . ($receipt['error'] ?? 'Unknown error'));
+                error_log('Receipt failed (non-blocking): ' . (string) ($receipt['error'] ?? 'Unknown error'));
             }
-
 
             error_log('HOTEL OWNER USER=' . $hotelOwnerUser);
             error_log('API KEY SET=' . (string) (int) ($centralBankApiKey !== false && $centralBankApiKey !== ''));
@@ -304,19 +312,20 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
 
             $deposit = centralbankDeposit($hotelOwnerUser, (string) $centralBankApiKey, $transferCode);
 
-
             if (!$deposit['ok']) {
                 throw new RuntimeException('Deposit failed: ' . (($deposit['error'] ?? 'Unknown error')));
             }
 
             $database->commit();
-            $successMessage = 'Booking confirmed and payment processed!';
+
+            header('Location: booking.php?success=1#booking');
+            exit;
         } catch (Throwable $e) {
             if ($database->inTransaction()) {
                 $database->rollBack();
             }
 
-            $errors[] = 'Could not save booking: ' . $e->getMessage();
+            $errors[] = 'Booking could not be completed. Please try again.';
         }
     }
 }

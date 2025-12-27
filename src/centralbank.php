@@ -5,7 +5,6 @@ declare(strict_types=1);
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 
 const CENTRALBANK_BASE_URL = 'https://yrgopelag.se/centralbank/';
 
@@ -13,20 +12,22 @@ function centralbankPost(string $endpoint, array $payload): array
 {
     $url = rtrim(CENTRALBANK_BASE_URL, '/') . '/' . ltrim($endpoint, '/');
 
-    $client = new Client();
-
     try {
+        $client = new Client();
+
         $response = $client->post($url, [
             'json' => $payload,
-            'headers' => [
-                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-            ],
-            'timeout' => 10,
+            'timeout' => 12,
+            'connect_timeout' => 6,
             'http_errors' => false,
+            'headers' => [
+                'Accept' => 'application/json',
+                'Connection' => 'close',
+            ],
         ]);
 
         $statusCode = $response->getStatusCode();
-        $raw = $response->getBody()->getContents();
+        $raw = (string) $response->getBody();
 
         $data = json_decode($raw, true);
 
@@ -43,7 +44,7 @@ function centralbankPost(string $endpoint, array $payload): array
             return [
                 'ok' => false,
                 'status' => $statusCode,
-                'error' => 'Central bank returned invalid JSON (status ' . $statusCode . '). Raw response: ' . substr($raw, 0, 500) . '...',
+                'error' => 'Central bank returned invalid response (status ' . $statusCode . ').',
                 'data' => $raw,
             ];
         }
@@ -53,17 +54,14 @@ function centralbankPost(string $endpoint, array $payload): array
         return [
             'ok' => $ok,
             'status' => $statusCode,
-            'error' => $ok ? null : ($data['error'] ?? 'Central bank error.'),
+            'error' => $ok ? null : (string) ($data['error'] ?? 'Central bank error.'),
             'data' => $data,
         ];
-    } catch (RequestException $e) {
-        $statusCode = $e->hasResponse() ? $e->getResponse()->getStatusCode() : 0;
-        $errorMessage = $e->getMessage();
-
+    } catch (Throwable $e) {
         return [
             'ok' => false,
-            'status' => $statusCode,
-            'error' => 'Could not reach central bank: ' . $errorMessage,
+            'status' => 0,
+            'error' => 'Could not reach central bank: ' . $e->getMessage(),
             'data' => null,
         ];
     }
@@ -104,28 +102,4 @@ function centralbankSendReceipt(
         'features_used' => $featuresUsed,
         'star_rating' => $starRating,
     ]);
-}
-
-function centralbankRegisterIsland(
-    string $islandName,
-    string $hotelName,
-    string $url,
-    int $stars,
-    string $user,
-    string $apiKey,
-    string $hotelSpecificName,
-    array $featuresByActivityAndTier
-): array {
-    $payload = [
-        'islandName' => $islandName,
-        'hotelName' => $hotelName,
-        'url' => $url,
-        'stars' => $stars,
-        'user' => $user,
-        'api_key' => $apiKey,
-        'hotel_specific_name' => $hotelSpecificName,
-        'features' => $featuresByActivityAndTier,
-    ];
-
-    return centralbankPost('islands', $payload);
 }
