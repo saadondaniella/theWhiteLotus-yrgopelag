@@ -2,8 +2,13 @@
 
 declare(strict_types=1);
 
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+require_once __DIR__ . '/src/database.php';
+require_once __DIR__ . '/src/functions.php';
+require_once __DIR__ . '/src/centralbank.php';
+require_once __DIR__ . '/config.php';
+
+$errors = [];
+$successMessage = null;
 
 $roomContent = [
     'luxury' => [
@@ -23,7 +28,7 @@ $roomContent = [
         ],
     ],
     'budget' => [
-        'text' => 'Perfect if you want comfort, views, and that island feeling — without going all in. Clean, airy, and calm, 
+        'text' => 'Perfect if you want comfort, views, and that island feeling — without going all in. Clean, airy, and calm,
 with front-row access to turquoise waters and palm-lined beaches. A smart choice that still delivers a stay you’ll love (and want to book fast).',
         'bullets' => [
             'Total Area 40 sqm',
@@ -33,16 +38,6 @@ with front-row access to turquoise waters and palm-lined beaches. A smart choice
     ],
 ];
 
-require_once __DIR__ . '/src/database.php';
-require_once __DIR__ . '/src/functions.php';
-require_once __DIR__ . '/src/header.php';
-require_once __DIR__ . '/src/centralbank.php';
-
-$errors = [];
-$successMessage = null;
-if (isset($_GET['success'])) {
-    $successMessage = 'Booking confirmed! Enjoy your stay on Cozea Island 🌴';
-}
 
 $roomsStatement = $database->query('SELECT id, slug, name, price_per_night FROM rooms ORDER BY price_per_night DESC');
 $rooms = $roomsStatement->fetchAll(PDO::FETCH_ASSOC);
@@ -66,8 +61,8 @@ $bookedDaysByRoomId = [];
 foreach ($bookings as $booking) {
     $roomId = (int) $booking['room_id'];
 
-    $arrival = new DateTime($booking['arrival_date']);
-    $departure = new DateTime($booking['departure_date']);
+    $arrival = new DateTime((string) $booking['arrival_date']);
+    $departure = new DateTime((string) $booking['departure_date']);
 
     $departure->modify('-1 day');
 
@@ -81,80 +76,35 @@ foreach ($bookings as $booking) {
         $current->modify('+1 day');
     }
 }
-?>
 
-<main class="booking">
-
-    <section class="booking-rooms">
-        <h2 class="booking-title">OUR ROOMS</h2>
-
-        <div class="booking-rooms-grid">
-
-            <?php foreach ($rooms as $room): ?>
-                <?php
-                $slug = $room['slug'];
-                ?>
-
-                <article class="booking-room-card">
-                    <div class="booking-room-image">
-                        <img
-                            src="pictures/room-<?= escapeHtml($slug) ?>.png"
-                            alt="<?= escapeHtml($room['name']) ?>">
-                    </div>
-
-                    <h3 class="booking-room-name">
-                        <?= escapeHtml($room['name']) ?> <?= (int)$room['price_per_night'] ?>€
-                    </h3>
-
-                    <p class="booking-room-text">
-                        <?= escapeHtml($roomContent[$slug]['text']) ?>
-                    </p>
-
-                    <ul class="booking-room-features">
-                        <?php foreach ($roomContent[$slug]['bullets'] as $bullet): ?>
-                            <li><?= escapeHtml($bullet) ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </article>
-
-            <?php endforeach; ?>
-
-        </div>
-    </section>
-
-    <div class="availability-grid-outer">
-        <section class="availability">
-            <h2 class="availability-heading">CHECK OUT AVAILABILITY</h2>
-
-            <div class="availability-grid-outer">
-                <?php foreach ($rooms as $room): ?>
-                    <?php
-                    $roomId = (int) $room['id'];
-                    $title = strtoupper((string) $room['slug']) . ' - JAN 2026';
-
-                    renderJanuaryCalendar(
-                        $roomId,
-                        $bookedDaysByRoomId,
-                        $title
-                    );
-                    ?>
-                <?php endforeach; ?>
-            </div>
-        </section>
-    </div>
-</main>
-<?php
-
-$featuresStatement = $database->query('SELECT id, name, cost, activity, tier FROM features WHERE is_active = 1 ORDER BY cost ASC');
+$featuresStatement = $database->query(
+    'SELECT id, name, cost, activity, tier
+     FROM features
+     WHERE is_active = 1
+     ORDER BY cost ASC'
+);
 $features = $featuresStatement->fetchAll(PDO::FETCH_ASSOC);
+
 
 $arrivalDate = '2026-01-01';
 $departureDate = '2026-01-02';
 $roomSlug = '';
 $selectedFeatureIds = [];
-
 $totalCost = null;
 $nights = null;
+
+
+if (isset($_GET['success']) && $_GET['success'] === '1') {
+    $successRoom = isset($_GET['room']) ? (string) $_GET['room'] : '';
+    $successArrival = isset($_GET['arrival']) ? (string) $_GET['arrival'] : '';
+    $successDeparture = isset($_GET['departure']) ? (string) $_GET['departure'] : '';
+
+    if ($successRoom !== '' && $successArrival !== '' && $successDeparture !== '') {
+        $successMessage = 'Booking confirmed! ' . $successRoom . ' from ' . $successArrival . ' to ' . $successDeparture . '. Enjoy your stay on Cozea Island 🌴';
+    } else {
+        $successMessage = 'Booking confirmed! Enjoy your stay on Cozea Island 🌴';
+    }
+}
 
 if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_POST['departure_date'], $_POST['transfer_code'])) {
     $guestName = trim((string) $_POST['guest_name']);
@@ -176,6 +126,7 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
     if ($arrivalDate < '2026-01-01' || $arrivalDate > '2026-01-31') {
         $errors[] = 'Arrival date must be within January 2026.';
     }
+
     if ($departureDate < '2026-01-01' || $departureDate > '2026-01-31') {
         $errors[] = 'Departure date must be within January 2026.';
     }
@@ -186,8 +137,9 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
 
     $selectedRoom = null;
     foreach ($rooms as $room) {
-        if ($room['slug'] === $roomSlug) {
+        if ((string) $room['slug'] === $roomSlug) {
             $selectedRoom = $room;
+            break;
         }
     }
 
@@ -200,8 +152,8 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
             SELECT COUNT(*)
             FROM bookings
             WHERE room_id = :room_id
-            AND NOT (departure_date <= :arrival_date OR arrival_date>= :departure_date)
-                ');
+              AND NOT (departure_date <= :arrival_date OR arrival_date >= :departure_date)
+        ');
 
         $checkStatement->execute([
             ':room_id' => (int) $selectedRoom['id'],
@@ -252,9 +204,9 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
 
         try {
             $insertBooking = $database->prepare('
-            INSERT INTO bookings (room_id, guest_name, arrival_date, departure_date, transfer_code, total_cost, created_at)
-            VALUES (:room_id, :guest_name, :arrival_date, :departure_date, :transfer_code, :total_cost, :created_at)
-        ');
+                INSERT INTO bookings (room_id, guest_name, arrival_date, departure_date, transfer_code, total_cost, created_at)
+                VALUES (:room_id, :guest_name, :arrival_date, :departure_date, :transfer_code, :total_cost, :created_at)
+            ');
 
             $insertBooking->execute([
                 ':room_id' => (int) $selectedRoom['id'],
@@ -270,9 +222,9 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
 
             if ($selectedFeatureIds !== []) {
                 $insertFeature = $database->prepare('
-                INSERT INTO booking_features (booking_id, feature_id)
-                VALUES (:booking_id, :feature_id)
-            ');
+                    INSERT INTO booking_features (booking_id, feature_id)
+                    VALUES (:booking_id, :feature_id)
+                ');
 
                 foreach ($selectedFeatureIds as $featureId) {
                     $insertFeature->execute([
@@ -293,32 +245,29 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
             }
 
             $receipt = centralbankSendReceipt(
-                $hotelOwnerUser,
+                (string) $hotelOwnerUser,
                 (string) $centralBankApiKey,
                 $guestName,
                 $arrivalDate,
                 $departureDate,
                 $featuresUsed,
-                $hotelRating
+                (int) $hotelRating
             );
 
             if (!$receipt['ok']) {
                 error_log('Receipt failed (non-blocking): ' . (string) ($receipt['error'] ?? 'Unknown error'));
             }
 
-            error_log('HOTEL OWNER USER=' . $hotelOwnerUser);
-            error_log('API KEY SET=' . (string) (int) ($centralBankApiKey !== false && $centralBankApiKey !== ''));
-
-
-            $deposit = centralbankDeposit($hotelOwnerUser, (string) $centralBankApiKey, $transferCode);
+            $deposit = centralbankDeposit((string) $hotelOwnerUser, (string) $centralBankApiKey, $transferCode);
 
             if (!$deposit['ok']) {
-                throw new RuntimeException('Deposit failed: ' . (($deposit['error'] ?? 'Unknown error')));
+                throw new RuntimeException('Deposit failed: ' . (string) ($deposit['error'] ?? 'Unknown error'));
             }
 
             $database->commit();
 
-            header('Location: booking.php?success=1#booking');
+            $roomNameForUrl = (string) $selectedRoom['name'];
+            header('Location: booking.php?success=1&room=' . urlencode($roomNameForUrl) . '&arrival=' . urlencode($arrivalDate) . '&departure=' . urlencode($departureDate) . '#booking');
             exit;
         } catch (Throwable $e) {
             if ($database->inTransaction()) {
@@ -329,7 +278,62 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
         }
     }
 }
+
+require_once __DIR__ . '/src/header.php';
 ?>
+
+<main class="booking">
+    <section class="booking-rooms">
+        <h2 class="booking-title">OUR ROOMS</h2>
+
+        <div class="booking-rooms-grid">
+            <?php foreach ($rooms as $room) : ?>
+                <?php $slug = (string) $room['slug']; ?>
+
+                <article class="booking-room-card">
+                    <div class="booking-room-image">
+                        <img
+                            src="pictures/room-<?= escapeHtml($slug) ?>.png"
+                            alt="<?= escapeHtml((string) $room['name']) ?>">
+                    </div>
+
+                    <h3 class="booking-room-name">
+                        <?= escapeHtml((string) $room['name']) ?> <?= (int) $room['price_per_night'] ?>€
+                    </h3>
+
+                    <p class="booking-room-text">
+                        <?= escapeHtml((string) ($roomContent[$slug]['text'] ?? '')) ?>
+                    </p>
+
+                    <ul class="booking-room-features">
+                        <?php foreach (($roomContent[$slug]['bullets'] ?? []) as $bullet) : ?>
+                            <li><?= escapeHtml((string) $bullet) ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </article>
+            <?php endforeach; ?>
+        </div>
+    </section>
+
+    <section class="availability">
+        <h2 class="availability-heading">CHECK OUT AVAILABILITY</h2>
+
+        <div class="availability-grid-outer">
+            <?php foreach ($rooms as $room) : ?>
+                <?php
+                $roomId = (int) $room['id'];
+                $title = strtoupper((string) $room['slug']) . ' - JAN 2026';
+
+                renderJanuaryCalendar(
+                    $roomId,
+                    $bookedDaysByRoomId,
+                    $title
+                );
+                ?>
+            <?php endforeach; ?>
+        </div>
+    </section>
+</main>
 
 <main class="booking-hero">
     <div class="booking-inner">
@@ -346,7 +350,7 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
             <?php if ($errors !== []) : ?>
                 <ul role="alert" class="notice notice-error">
                     <?php foreach ($errors as $error) : ?>
-                        <li><?= escapeHtml($error) ?></li>
+                        <li><?= escapeHtml((string) $error) ?></li>
                     <?php endforeach; ?>
                 </ul>
             <?php endif; ?>
@@ -355,7 +359,11 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
                 <div class="booking-grid">
                     <label class="field">
                         <span class="field-label">Guest name</span>
-                        <input class="field-control" type="text" name="guest_name" required
+                        <input
+                            class="field-control"
+                            type="text"
+                            name="guest_name"
+                            required
                             value="<?= isset($_POST['guest_name']) ? escapeHtml((string) $_POST['guest_name']) : '' ?>">
                     </label>
 
@@ -369,7 +377,8 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
                         <select class="field-control" name="room_slug" required>
                             <option value="">Choose a room</option>
                             <?php foreach ($rooms as $room) : ?>
-                                <option value="<?= escapeHtml((string) $room['slug']) ?>"
+                                <option
+                                    value="<?= escapeHtml((string) $room['slug']) ?>"
                                     <?= ((string) $room['slug'] === $roomSlug) ? 'selected' : '' ?>>
                                     <?= escapeHtml((string) $room['name']) ?> (<?= (int) $room['price_per_night'] ?> €/night)
                                 </option>
@@ -379,13 +388,25 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
 
                     <label class="field">
                         <span class="field-label">Arrival date</span>
-                        <input class="field-control" type="date" name="arrival_date" required min="2026-01-01" max="2026-01-31"
+                        <input
+                            class="field-control"
+                            type="date"
+                            name="arrival_date"
+                            required
+                            min="2026-01-01"
+                            max="2026-01-31"
                             value="<?= escapeHtml($arrivalDate) ?>">
                     </label>
 
                     <label class="field">
                         <span class="field-label">Departure date</span>
-                        <input class="field-control" type="date" name="departure_date" required min="2026-01-01" max="2026-01-31"
+                        <input
+                            class="field-control"
+                            type="date"
+                            name="departure_date"
+                            required
+                            min="2026-01-01"
+                            max="2026-01-31"
                             value="<?= escapeHtml($departureDate) ?>">
                     </label>
                 </div>
@@ -397,7 +418,11 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
                         <?php foreach ($features as $feature) : ?>
                             <?php $id = (int) $feature['id']; ?>
                             <label class="features1-item">
-                                <input class="features1-checkbox" type="checkbox" name="features[]" value="<?= $id ?>"
+                                <input
+                                    class="features1-checkbox"
+                                    type="checkbox"
+                                    name="features[]"
+                                    value="<?= $id ?>"
                                     <?= in_array($id, $selectedFeatureIds, true) ? 'checked' : '' ?>>
                                 <span class="features1-text">
                                     <?= escapeHtml((string) $feature['name']) ?>
@@ -431,6 +456,5 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
         </section>
     </div>
 </main>
-
 
 <?php require __DIR__ . '/src/footer.php'; ?>
