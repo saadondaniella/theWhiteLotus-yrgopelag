@@ -10,7 +10,7 @@ require_once __DIR__ . '/../config.php';
 
 <head>
     <meta charset="UTF-8">
-    <title>The White Lotus</title>
+    <title>The White Lotus – Cozea Island</title>
     <link rel="stylesheet" href="./public/style.css">
     <link rel="stylesheet" href="./public/style2.css">
     <link rel="stylesheet" href="./public/styleB.css">
@@ -36,7 +36,7 @@ require_once __DIR__ . '/../config.php';
             </div>
 
             <div class="header-icons">
-                <a class="navbar-icon" href="#" aria-label="Instagram">
+                <a class="navbar-icon" href="https://www.instagram.com/" aria-label="Instagram">
                     <img class="navbar-icon-image" src="pictures/instagram-icon.png" alt="Instagram icon" />
                 </a>
                 <a class="navbar-icon" href="#" aria-label="Facebook">

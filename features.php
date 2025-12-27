@@ -17,8 +17,8 @@
         <p>But Cozea Island is not about choosing from a list. It’s about curiosity.</p>
 
         <p>
-            Ask for what you seek.<br>
-            You can send a message in the contact page if your seeking something else than what's offers on the booking page.
+            Looking for something specific? Send a request via our contact page.
+            Tip: write the feature name + dates (Jan 2026) — we may be able to arrange it.
         </p>
 
         <a class="features-cta" href="contact.php">send request</a>

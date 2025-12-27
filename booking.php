@@ -9,6 +9,9 @@ require_once __DIR__ . '/config.php';
 
 $errors = [];
 $successMessage = null;
+if ($centralBankApiKey === false || $centralBankApiKey === '') {
+    $errors[] = 'Hotel configuration error: API key is missing.';
+}
 
 $roomContent = [
     'luxury' => [
@@ -108,6 +111,9 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
 
 if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_POST['departure_date'], $_POST['transfer_code'])) {
     $guestName = trim((string) $_POST['guest_name']);
+    if (strcasecmp($guestName, (string) $hotelOwnerUser) === 0) {
+        $errors[] = 'Guest name cannot be the same as the hotel owner.';
+    }
     $roomSlug = (string) $_POST['room_slug'];
     $arrivalDate = (string) $_POST['arrival_date'];
     $departureDate = (string) $_POST['departure_date'];
@@ -274,6 +280,7 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
                 $database->rollBack();
             }
 
+            error_log('Booking error: ' . $e->getMessage());
             $errors[] = 'Booking could not be completed. Please try again.';
         }
     }
@@ -335,7 +342,7 @@ require_once __DIR__ . '/src/header.php';
     </section>
 </main>
 
-<main class="booking-hero">
+<section class="booking-hero">
     <div class="booking-inner">
         <section class="booking-card" id="booking">
             <header class="booking-header">
@@ -369,7 +376,13 @@ require_once __DIR__ . '/src/header.php';
 
                     <label class="field">
                         <span class="field-label">Transfer code</span>
-                        <input class="field-control" type="text" name="transfer_code" placeholder="xxxx-xxxx-xxxx" required>
+                        <input
+                            class="field-control"
+                            type="text"
+                            name="transfer_code"
+                            placeholder="xxxx-xxxx-xxxx"
+                            value="<?= isset($_POST['transfer_code']) ? escapeHtml((string) $_POST['transfer_code']) : '' ?>"
+                            required>
                     </label>
 
                     <label class="field field-full">
@@ -412,7 +425,9 @@ require_once __DIR__ . '/src/header.php';
                 </div>
 
                 <div class="features1">
-                    <h3 class="features1-title">Add features for your stay</h3>
+                    <h3 class="features1-title">
+                        Choose island features.<br> The more you dare, the more tourist points you may collect in the showdown.
+                    </h3>
 
                     <div class="features1-grid">
                         <?php foreach ($features as $feature) : ?>
@@ -455,6 +470,6 @@ require_once __DIR__ . '/src/header.php';
             <?php endif; ?>
         </section>
     </div>
-</main>
+</section>
 
 <?php require __DIR__ . '/src/footer.php'; ?>

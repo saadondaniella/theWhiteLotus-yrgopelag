@@ -72,6 +72,10 @@
   resize: vertical;
 }
 
+.contact-hint {
+  text-transform: none;
+}
+
 .contact-button {
   width: fit-content;
   padding: 10px 18px;
@@ -93,6 +97,7 @@
   text-align: center;
   letter-spacing: 0.08em;
   margin: 0 0 40px 0;
+  text-transform: none;
 }
 
 .features-text {

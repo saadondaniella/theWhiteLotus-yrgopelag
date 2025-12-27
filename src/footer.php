@@ -7,9 +7,9 @@ require_once __DIR__ . '/functions.php';
 $errors = [];
 $successMessage = null;
 
-if (isset($_POST['name'], $_POST['email'])) {
-    $name = trim($_POST['name']);
-    $email = trim($_POST['email']);
+if (isset($_POST['newsletter_submit']) && $_POST['newsletter_submit'] === '1') {
+    $name = trim((string) $_POST['name']);
+    $email = trim((string) $_POST['email']);
 
     if ($name === '') {
         $errors[] = 'The name field is missing.';
@@ -21,7 +21,7 @@ if (isset($_POST['name'], $_POST['email'])) {
         $errors[] = 'The email is not a valid email address.';
     }
 
-    if (empty($errors)) {
+    if ($errors === []) {
         $successMessage = "Thanks, $name, for signing up!";
     }
 }
@@ -37,7 +37,7 @@ if (isset($_POST['name'], $_POST['email'])) {
             </p>
 
             <nav class="contact-block-links" aria-label="Contact links">
-                <a class="contact-block-link" href="mailto:saadondaniella@gmail.com">Email</a>
+                <a class="contact-block-link" href="contact.php">Email</a>
             </nav>
             <a class="header-phone" href="tel:+46735906163">
                 <img
@@ -53,6 +53,7 @@ if (isset($_POST['name'], $_POST['email'])) {
             <p class="newsletter-block-text">Subscribe to receive news from The White Lotus</p>
 
             <form class="newsletter-block-form" method="post" action="#newsletter">
+                <input type="hidden" name="newsletter_submit" value="1">
                 <label class="sr-only" for="name">Your name</label>
                 <input
                     class="newsletter-block-input"

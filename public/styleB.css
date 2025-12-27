@@ -171,6 +171,15 @@
   padding-bottom: 1rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
+.booking-flow-hint {
+  text-transform: none;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 0.75rem 1rem;
+  margin-top: 1rem;
+  border-left: 3px solid var(--accentColor);
+}
 
 .booking-title {
   font-size: 2rem;
@@ -256,9 +265,10 @@ select.field-control {
 }
 
 .features1-title {
-  font-size: 1rem;
-  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  margin-bottom: 3%;
   opacity: 0.8;
+  text-transform: none;
 }
 
 .features1-grid {
@@ -272,6 +282,7 @@ select.field-control {
   align-items: center;
   gap: 0.75rem;
   font-size: 1rem;
+  text-transform: none;
 }
 
 .features1-checkbox {

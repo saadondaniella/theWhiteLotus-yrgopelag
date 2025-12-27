@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require __DIR__ . '/src/database.php';
+require __DIR__ . '/src/functions.php';
 
 $statement = $database->query('SELECT slug, name, price_per_night FROM rooms ORDER BY price_per_night DESC');
 $roomsFromDatabase = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -56,21 +57,22 @@ require __DIR__ . '/src/header.php';
                 <article class="room-card">
                     <img
                         class="room-image"
-                        src="<?= $room['image']; ?>"
-                        alt="<?= $room['name']; ?> room" />
+                        src="<?= escapeHtml($room['image']); ?>"
+                        alt="<?= escapeHtml($room['name']); ?> room" />
 
                     <div class="room-overlay">
                         <p class="room-name">
-                            <?= strtoupper($room['name']); ?> <?= $room['price']; ?>€
+                            <?= escapeHtml(strtoupper($room['name'])); ?> <?= (int) $room['price']; ?>€
                         </p>
 
-                        <a class="room-button" href="booking.php?room=<?= $room['slug']; ?>">
+                        <a class="room-button" href="booking.php?room=<?= urlencode($room['slug']); ?>">
                             BOOK HERE
                         </a>
                     </div>
                 </article>
             <?php endforeach; ?>
         </div>
+
     </section>
 
     <article class="island-story">

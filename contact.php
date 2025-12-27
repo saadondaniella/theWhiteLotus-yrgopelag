@@ -56,24 +56,44 @@ require __DIR__ . '/src/header.php'; ?>
             <form class="contact-form" method="post" action="">
                 <label class="contact-label">
                     Your name
-                    <input class="contact-input" type="text" name="name" />
+                    <input
+                        class="contact-input"
+                        type="text"
+                        name="name"
+                        required>
                 </label>
 
                 <label class="contact-label">
                     Your email
-                    <input class="contact-input" type="email" name="email" />
+                    <input
+                        class="contact-input"
+                        type="email"
+                        name="email"
+                        required>
                 </label>
+
+                <p class="contact-hint">
+                    Looking for a specific feature?
+                    Please include the feature name and your dates in January 2026.
+                </p>
 
                 <label class="contact-label">
                     Message
-                    <textarea class="contact-textarea" name="message"></textarea>
+                    <textarea
+                        class="contact-textarea"
+                        name="message"
+                        required></textarea>
                 </label>
+
                 <?php if ($successMessage !== null): ?>
                     <p class="success"><?= htmlspecialchars($successMessage) ?></p>
                 <?php endif; ?>
 
-                <button class="contact-button" type="submit">Send</button>
+                <button class="contact-button" type="submit">
+                    Send request
+                </button>
             </form>
+
         </div>
     </section>
 </main>
