@@ -101,6 +101,7 @@ if (isset($_POST['newsletter_submit']) && $_POST['newsletter_submit'] === '1') {
         </p>
 
         <nav class="footer-nav">
+            <a class="footer-link" href="admin.php">Admin</a>
             <a class="footer-link" href="contact.php">Contact</a>
             <a class="footer-link" href="index.php">Privacy Policy</a>
             <a class="footer-link" href="index.php">Terms & Conditions</a>

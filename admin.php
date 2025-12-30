@@ -60,28 +60,68 @@ if ($isLoggedIn && isset($_POST['action']) && $_POST['action'] === 'save') {
         $activeFeatureIds = array_map('intval', $_POST['features']);
     }
 
+    $roomPrices = [];
+    if (isset($_POST['room_prices']) && is_array($_POST['room_prices'])) {
+        foreach ($_POST['room_prices'] as $roomId => $price) {
+            $roomIdInt = (int) $roomId;
+            $priceInt = (int) $price;
+
+            if ($roomIdInt <= 0) {
+                $errors[] = 'Invalid room id.';
+                break;
+            }
+
+            if ($priceInt < 0) {
+                $errors[] = 'Room price must be 0 or higher.';
+                break;
+            }
+
+            $roomPrices[$roomIdInt] = $priceInt;
+        }
+    }
+
     if ($errors === []) {
         if (!saveHotelRating($settingsPath, $newRating)) {
             $errors[] = 'Could not save settings.json (check storage folder permissions).';
         }
+    }
 
+    if ($errors === []) {
         $database->beginTransaction();
+
         try {
             $database->exec('UPDATE features SET is_active = 0');
 
             if ($activeFeatureIds !== []) {
-                $update = $database->prepare('UPDATE features SET is_active = 1 WHERE id = :id');
+                $updateFeature = $database->prepare('UPDATE features SET is_active = 1 WHERE id = :id');
+
                 foreach ($activeFeatureIds as $id) {
-                    $update->execute([':id' => $id]);
+                    $updateFeature->execute([':id' => $id]);
+                }
+            }
+
+            if ($roomPrices !== []) {
+                $updateRoom = $database->prepare(
+                    'UPDATE rooms
+                     SET price_per_night = :price_per_night
+                     WHERE id = :id'
+                );
+
+                foreach ($roomPrices as $roomIdInt => $priceInt) {
+                    $updateRoom->execute([
+                        ':price_per_night' => $priceInt,
+                        ':id' => $roomIdInt,
+                    ]);
                 }
             }
 
             $database->commit();
-            $success = 'Saved! Rating + features updated.';
+            $success = 'Saved! Rating, room prices and features updated.';
         } catch (Throwable $e) {
             if ($database->inTransaction()) {
                 $database->rollBack();
             }
+
             error_log('Admin save error: ' . $e->getMessage());
             $errors[] = 'Could not save changes. Please try again.';
         }
@@ -94,17 +134,25 @@ $features = $database->query(
      ORDER BY activity ASC, cost ASC'
 )->fetchAll();
 
-$currentRating = $hotelRating;
+$rooms = $database->query(
+    'SELECT id, slug, name, price_per_night
+     FROM rooms
+     ORDER BY price_per_night ASC'
+)->fetchAll();
+
+$currentRating = (int) $hotelRating;
 
 require __DIR__ . '/src/header.php';
 ?>
 
-<main class="booking-hero">
+<section class="booking-hero">
     <div class="booking-inner">
         <section class="booking-card" style="max-width: 60rem;">
             <header class="booking-header">
                 <h2 class="booking-title">Admin</h2>
-                <p class="booking-subtitle" style="text-transform:none;">This on only for the hotel manager.</p>
+                <p class="booking-subtitle" style="text-transform:none;">
+                    Only for the hotel manager.
+                </p>
             </header>
 
             <?php if ($errors !== []) : ?>
@@ -122,10 +170,12 @@ require __DIR__ . '/src/header.php';
             <?php if (!$isLoggedIn) : ?>
                 <form method="post" class="booking-form">
                     <input type="hidden" name="action" value="login">
+
                     <label class="field">
                         <span class="field-label">Admin password</span>
                         <input class="field-control" type="password" name="password" required>
                     </label>
+
                     <div class="actions">
                         <button class="btn-primary" type="submit">Login</button>
                     </div>
@@ -144,6 +194,32 @@ require __DIR__ . '/src/header.php';
                             <?php endfor; ?>
                         </select>
                     </label>
+
+                    <div class="features1" style="margin-top: 1.5rem;">
+                        <h3 class="features1-title" style="text-transform:none;">
+                            Room prices (€ / night)
+                        </h3>
+
+                        <div class="features1-grid">
+                            <?php foreach ($rooms as $room) : ?>
+                                <?php $roomId = (int) $room['id']; ?>
+                                <label class="features1-item" style="text-transform:none; display:flex; align-items:center; justify-content:space-between; gap:1rem;">
+                                    <span class="features1-text" style="text-transform:none;">
+                                        <?= escapeHtml((string) $room['name']) ?>
+                                    </span>
+
+                                    <input
+                                        class="field-control"
+                                        type="number"
+                                        name="room_prices[<?= $roomId ?>]"
+                                        min="0"
+                                        step="1"
+                                        style="max-width: 160px;"
+                                        value="<?= (int) $room['price_per_night'] ?>">
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
 
                     <div class="features1" style="margin-top: 1.5rem;">
                         <h3 class="features1-title" style="text-transform:none;">
@@ -184,6 +260,6 @@ require __DIR__ . '/src/header.php';
             <?php endif; ?>
         </section>
     </div>
-</main>
+</section>
 
 <?php require __DIR__ . '/src/footer.php'; ?>
