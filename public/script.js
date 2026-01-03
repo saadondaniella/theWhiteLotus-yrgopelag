@@ -39,3 +39,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 700);
   }, 4000);
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const guestInput = document.querySelector('input[name="guest_name"]');
+  const codeInput = document.querySelector('input[name="transfer_code"]');
+  const button = document.getElementById("bookingButton");
+
+  if (!guestInput || !codeInput || !button) return;
+
+  const updateButton = () => {
+    const hasGuest = guestInput.value.trim() !== "";
+
+    if (hasGuest) {
+      button.textContent = "Confirm booking";
+      button.classList.add("confirm");
+    } else {
+      button.textContent = "Calculate total";
+      button.classList.remove("confirm");
+    }
+  };
+
+  guestInput.addEventListener("input", updateButton);
+  codeInput.addEventListener("input", updateButton);
+  updateButton();
+});

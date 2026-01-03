@@ -171,7 +171,8 @@
   padding-bottom: 1rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
-.booking-flow-hint {
+
+.field-hint {
   text-transform: none;
   font-size: 0.95rem;
   line-height: 1.6;
@@ -300,16 +301,19 @@ select.field-control {
 }
 
 .btn-primary {
+  width: 200px;
   font-size: 1rem;
   padding: 1rem 2rem;
   background: #000;
-  color: #fff;
+  color: var(--background-color);
   border: none;
   cursor: pointer;
+  transition: background-color 0.25s ease;
 }
 
-.btn-primary:hover {
-  opacity: 0.85;
+.btn-primary.confirm {
+  background-color: var(--accentColor);
+  color: #000;
 }
 
 .summary {

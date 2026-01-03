@@ -19,7 +19,7 @@ function renderJanuaryCalendar(int $roomId, array $bookedDaysByRoomId, string $t
         <span>fri</span><span>sat</span><span>sun</span>
     </div>';
 
-    // Jag hårdkodar för jan 2026 startar på torsdag → offset 3
+    // Jag hårdkodar för jan 2026 startar på torsdag 
     $offset = 3;
 
     echo '<div class="availability-grid">';

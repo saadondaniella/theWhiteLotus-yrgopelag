@@ -125,8 +125,12 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
         $selectedFeatureIds = [];
     }
 
-    if ($guestName === '') {
-        $errors[] = 'Guest name is required.';
+    if ($totalCost !== null && $guestName === '') {
+        $errors[] = 'Guest name is required to confirm booking.';
+    }
+
+    if ($totalCost !== null && $transferCode === '') {
+        $errors[] = 'Transfer code is required to confirm booking.';
     }
 
     if ($arrivalDate < '2026-01-01' || $arrivalDate > '2026-01-31') {
@@ -192,21 +196,24 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
     }
 
     if ($errors === [] && $selectedRoom !== null && $totalCost !== null) {
-        $validation = centralbankValidateTransferCode($transferCode, $totalCost);
+        if ($transferCode !== '') {
+            $validation = centralbankValidateTransferCode($transferCode, $totalCost);
 
-        if (!$validation['ok']) {
-            $errorText = (string) ($validation['error'] ?? 'Unknown error');
+            if (!$validation['ok']) {
+                $errorText = (string) ($validation['error'] ?? 'Unknown error');
 
-            if (str_contains($errorText, 'Could not reach central bank') || str_contains($errorText, 'cURL error')) {
-                $errors[] = 'The Central Bank is not responding right now. Please wait a few seconds and try again.';
-            } else {
-                $errors[] = 'Transfer code validation failed: ' . $errorText;
+                if (str_contains($errorText, 'Could not reach central bank') || str_contains($errorText, 'cURL error')) {
+                    $errors[] = 'The Central Bank is not responding right now. Please wait a few seconds and try again.';
+                } else {
+                    $errors[] = 'Transfer code validation failed: ' . $errorText;
+                }
             }
         }
     }
 
-    if ($errors === [] && $selectedRoom !== null && $totalCost !== null) {
+    if ($errors === [] && $selectedRoom !== null && $totalCost !== null && $transferCode !== '' && $guestName !== '') {
         $database->beginTransaction();
+
 
         try {
             $insertBooking = $database->prepare('
@@ -346,9 +353,15 @@ require_once __DIR__ . '/src/header.php';
     <div class="booking-inner">
         <section class="booking-card" id="booking">
             <header class="booking-header">
+
                 <h2 id="booking-title" class="booking-title">Book a room</h2>
                 <p class="booking-subtitle">Check-in 15:00 · Check-out 11:00 · January 2026</p>
             </header>
+            <p class="field-hint">
+                1) Choose room, dates & features and click <strong>Calculate total</strong><br>
+                2) Create a transfer code in the Central Bank for that amount<br>
+                3) Enter your name + transfer code and click <strong>Confirm booking</strong><br>
+            </p>
 
             <?php if ($successMessage !== null) : ?>
                 <p role="status" class="notice notice-success"><?= escapeHtml($successMessage) ?></p>
@@ -370,7 +383,6 @@ require_once __DIR__ . '/src/header.php';
                             class="field-control"
                             type="text"
                             name="guest_name"
-                            required
                             value="<?= isset($_POST['guest_name']) ? escapeHtml((string) $_POST['guest_name']) : '' ?>">
                     </label>
 
@@ -381,8 +393,7 @@ require_once __DIR__ . '/src/header.php';
                             type="text"
                             name="transfer_code"
                             placeholder="xxxx-xxxx-xxxx"
-                            value="<?= isset($_POST['transfer_code']) ? escapeHtml((string) $_POST['transfer_code']) : '' ?>"
-                            required>
+                            value="<?= isset($_POST['transfer_code']) ? escapeHtml((string) $_POST['transfer_code']) : '' ?>">
                     </label>
 
                     <label class="field field-full">
@@ -449,7 +460,8 @@ require_once __DIR__ . '/src/header.php';
                 </div>
 
                 <div class="actions">
-                    <button class="btn-primary" type="submit">Save booking</button>
+                    <button class="btn-primary" id="bookingButton" type="submit">Calculate total</button>
+
                 </div>
             </form>
 
