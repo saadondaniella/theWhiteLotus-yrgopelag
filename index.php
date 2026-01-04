@@ -75,27 +75,27 @@ require __DIR__ . '/src/header.php';
 
     </section>
 
-    <article class="island-story">
-        <h2 class="island-story-title">THE ISLAND OF COZEA</h2>
+    <article class="intro-story">
+        <h2 class="intro-story-title">THE ISLAND OF COZEA</h2>
 
-        <p class="island-story-text">
+        <p class="intro-story-text">
             Far from the mainland, surrounded by endless shades of turquoise, lies Cozea
             Island — a place whispered about rather than spoken of openly.
         </p>
 
-        <p class="island-story-text">
+        <p class="intro-story-text">
             Once a quiet paradise, Cozea has long attracted those seeking escape:
             artists, wanderers, the wealthy, and the restless. Some arrive in search of
             beauty, others in search of themselves. Few leave unchanged.
         </p>
 
-        <p class="island-story-text">
+        <p class="intro-story-text">
             At the heart of the island stands <strong>The White Lotus</strong>, a resort
             known as much for its serenity as for its secrets. Beneath its calm surface,
             stories unfold — of desire, power, and unexpected turns.
         </p>
 
-        <p class="island-story-text">
+        <p class="intro-story-text">
             On Cozea Island, paradise is real. But so are the consequences.
         </p>
     </article>

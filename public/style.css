@@ -243,20 +243,20 @@ a:hover {
   color: var(--textColorDark);
 }
 
-.island-story {
+.intro-story {
   max-width: 900px;
   margin: 4rem auto 5rem;
   padding: 0 1.5rem;
   text-align: center;
 }
 
-.island-story-title {
+.intro-story-title {
   margin: 0 0 1.5rem;
   font-size: 1.5;
   letter-spacing: 0.8px;
 }
 
-.island-story-text {
+.intro-story-text {
   margin: 0 0 1.25rem;
   font-size: 1rem;
   line-height: 1.7;
