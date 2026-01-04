@@ -2,7 +2,7 @@
 
 
 <section class="features">
-    <h2 class="features-title">DISCOVER THE WHITE LOTUS FEATURES</h2>
+    <h1 class="features-title">DISCOVER THE WHITE LOTUS FEATURES</h1>
 
     <div class="features-text">
         <p>On Cozea Island, not everything reveals itself at once. Some things are meant to be discovered.</p>

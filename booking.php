@@ -9,6 +9,7 @@ require_once __DIR__ . '/config.php';
 
 $errors = [];
 $successMessage = null;
+
 if ($centralBankApiKey === false || $centralBankApiKey === '') {
     $errors[] = 'Hotel configuration error: API key is missing.';
 }
@@ -17,7 +18,7 @@ $roomContent = [
     'luxury' => [
         'text' => 'This is the ultimate overnight stay. Effortless luxury, calming details, and a seamless flow between room and ocean. You could save money — or you could be happy. Don’t be cheap. Book it. Your health is at stake. There may or may not be a freezer full of ice cream. Do not forget to add pool in the features.',
         'bullets' => [
-            'Total Area 191 sqm',
+            'Total Area 100 sqm',
             'Indoor/outdoor showers',
             'Your own massage therapist',
         ],
@@ -41,8 +42,11 @@ with front-row access to turquoise waters and palm-lined beaches. A smart choice
     ],
 ];
 
-
-$roomsStatement = $database->query('SELECT id, slug, name, price_per_night FROM rooms ORDER BY price_per_night DESC');
+$roomsStatement = $database->query(
+    'SELECT id, slug, name, price_per_night
+     FROM rooms
+     ORDER BY price_per_night DESC'
+);
 $rooms = $roomsStatement->fetchAll(PDO::FETCH_ASSOC);
 
 $statement = $database->prepare(
@@ -67,6 +71,7 @@ foreach ($bookings as $booking) {
     $arrival = new DateTime((string) $booking['arrival_date']);
     $departure = new DateTime((string) $booking['departure_date']);
 
+    // Make departure inclusive for the calendar
     $departure->modify('-1 day');
 
     $current = clone $arrival;
@@ -88,7 +93,9 @@ $featuresStatement = $database->query(
 );
 $features = $featuresStatement->fetchAll(PDO::FETCH_ASSOC);
 
-
+/**
+ * Defaults for the form (so page works on first load)
+ */
 $arrivalDate = '2026-01-01';
 $departureDate = '2026-01-02';
 $roomSlug = '';
@@ -96,28 +103,50 @@ $selectedFeatureIds = [];
 $totalCost = null;
 $nights = null;
 
-
+/**
+ * SUCCESS (after redirect)
+ * We keep the message text simple and safe.
+ */
 if (isset($_GET['success']) && $_GET['success'] === '1') {
     $successRoom = isset($_GET['room']) ? (string) $_GET['room'] : '';
     $successArrival = isset($_GET['arrival']) ? (string) $_GET['arrival'] : '';
     $successDeparture = isset($_GET['departure']) ? (string) $_GET['departure'] : '';
+    $successTotal = isset($_GET['total']) ? (string) $_GET['total'] : '';
+    $successFeatures = isset($_GET['features']) ? (string) $_GET['features'] : '';
 
     if ($successRoom !== '' && $successArrival !== '' && $successDeparture !== '') {
-        $successMessage = 'Booking confirmed! ' . $successRoom . ' from ' . $successArrival . ' to ' . $successDeparture . '. Enjoy your stay on Cozea Island 🌴';
+        $lines = [];
+        $lines[] = 'Enjoy the room ' . $successRoom . '.';
+        $lines[] = 'From ' . $successArrival . ' to ' . $successDeparture . '.';
+
+        if ($successTotal !== '') {
+            $lines[] = 'Total cost: ' . $successTotal . ' €.';
+        }
+
+        if ($successFeatures !== '') {
+            $lines[] = 'Features: ' . $successFeatures . '.';
+        }
+
+        $lines[] = 'Your journey begins now. 🌴';
+
+        $successMessage = implode("\n", $lines);
     } else {
-        $successMessage = 'Booking confirmed! Enjoy your stay on Cozea Island 🌴';
+        $successMessage = "Booking confirmed!\nEnjoy your stay on Cozea Island 🌴";
     }
 }
 
-if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_POST['departure_date'], $_POST['transfer_code'])) {
-    $guestName = trim((string) $_POST['guest_name']);
-    if (strcasecmp($guestName, (string) $hotelOwnerUser) === 0) {
-        $errors[] = 'Guest name cannot be the same as the hotel owner.';
-    }
+/**
+ * POST (Calculate total OR Confirm booking)
+ * - Always calculate total when room+dates are valid
+ * - Only confirm booking when BOTH guest name + transfer code are filled in
+ */
+if (isset($_POST['room_slug'], $_POST['arrival_date'], $_POST['departure_date'])) {
+    $guestName = isset($_POST['guest_name']) ? trim((string) $_POST['guest_name']) : '';
+    $transferCode = isset($_POST['transfer_code']) ? trim((string) $_POST['transfer_code']) : '';
+
     $roomSlug = (string) $_POST['room_slug'];
     $arrivalDate = (string) $_POST['arrival_date'];
     $departureDate = (string) $_POST['departure_date'];
-    $transferCode = trim((string) $_POST['transfer_code']);
 
     if (isset($_POST['features']) && is_array($_POST['features'])) {
         $selectedFeatureIds = array_map('intval', $_POST['features']);
@@ -125,14 +154,19 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
         $selectedFeatureIds = [];
     }
 
-    if ($totalCost !== null && $guestName === '') {
-        $errors[] = 'Guest name is required to confirm booking.';
+    // Decide what the user is trying to do
+    $wantsConfirmBooking = ($guestName !== '' && $transferCode !== '');
+    $enteredOneButNotBoth = (($guestName !== '' && $transferCode === '') || ($guestName === '' && $transferCode !== ''));
+
+    if ($enteredOneButNotBoth) {
+        $errors[] = 'To confirm a booking, enter BOTH guest name and transfer code. (Or leave both empty to only calculate total.)';
     }
 
-    if ($totalCost !== null && $transferCode === '') {
-        $errors[] = 'Transfer code is required to confirm booking.';
+    if ($guestName !== '' && strcasecmp($guestName, (string) $hotelOwnerUser) === 0) {
+        $errors[] = 'Guest name cannot be the same as the hotel owner.';
     }
 
+    // Date rules
     if ($arrivalDate < '2026-01-01' || $arrivalDate > '2026-01-31') {
         $errors[] = 'Arrival date must be within January 2026.';
     }
@@ -145,6 +179,7 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
         $errors[] = 'Departure must be after arrival.';
     }
 
+    // Find selected room
     $selectedRoom = null;
     foreach ($rooms as $room) {
         if ((string) $room['slug'] === $roomSlug) {
@@ -157,6 +192,7 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
         $errors[] = 'Please choose a room.';
     }
 
+    // Availability check (useful for both calculating and confirming)
     if ($errors === [] && $selectedRoom !== null) {
         $checkStatement = $database->prepare('
             SELECT COUNT(*)
@@ -178,6 +214,7 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
         }
     }
 
+    // Calculate total cost
     if ($errors === [] && $selectedRoom !== null) {
         $arrival = new DateTime($arrivalDate);
         $departure = new DateTime($departureDate);
@@ -195,25 +232,24 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
         $totalCost = ($roomPricePerNight + $featuresCostPerNight) * $nights;
     }
 
-    if ($errors === [] && $selectedRoom !== null && $totalCost !== null) {
-        if ($transferCode !== '') {
-            $validation = centralbankValidateTransferCode($transferCode, $totalCost);
+    // If user wants to confirm, validate transfer code
+    if ($errors === [] && $wantsConfirmBooking && $selectedRoom !== null && $totalCost !== null) {
+        $validation = centralbankValidateTransferCode($transferCode, $totalCost);
 
-            if (!$validation['ok']) {
-                $errorText = (string) ($validation['error'] ?? 'Unknown error');
+        if (!$validation['ok']) {
+            $errorText = (string) ($validation['error'] ?? 'Unknown error');
 
-                if (str_contains($errorText, 'Could not reach central bank') || str_contains($errorText, 'cURL error')) {
-                    $errors[] = 'The Central Bank is not responding right now. Please wait a few seconds and try again.';
-                } else {
-                    $errors[] = 'Transfer code validation failed: ' . $errorText;
-                }
+            if (str_contains($errorText, 'Could not reach central bank') || str_contains($errorText, 'cURL error')) {
+                $errors[] = 'The Central Bank is not responding right now. Please wait a few seconds and try again.';
+            } else {
+                $errors[] = 'Transfer code validation failed: ' . $errorText;
             }
         }
     }
 
-    if ($errors === [] && $selectedRoom !== null && $totalCost !== null && $transferCode !== '' && $guestName !== '') {
+    // Confirm booking (only when the user truly tries to confirm)
+    if ($errors === [] && $wantsConfirmBooking && $selectedRoom !== null && $totalCost !== null) {
         $database->beginTransaction();
-
 
         try {
             $insertBooking = $database->prepare('
@@ -247,6 +283,7 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
                 }
             }
 
+            // Receipt payload for central bank
             $featuresUsed = [];
             foreach ($features as $feature) {
                 if (in_array((int) $feature['id'], $selectedFeatureIds, true)) {
@@ -268,6 +305,7 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
             );
 
             if (!$receipt['ok']) {
+                // Non-blocking
                 error_log('Receipt failed (non-blocking): ' . (string) ($receipt['error'] ?? 'Unknown error'));
             }
 
@@ -279,8 +317,26 @@ if (isset($_POST['guest_name'], $_POST['room_slug'], $_POST['arrival_date'], $_P
 
             $database->commit();
 
+            // Build features list for the popup (optional)
+            $selectedFeatureNames = [];
+            foreach ($features as $feature) {
+                if (in_array((int) $feature['id'], $selectedFeatureIds, true)) {
+                    $selectedFeatureNames[] = (string) $feature['name'];
+                }
+            }
+
+            $featuresForUrl = implode(', ', $selectedFeatureNames);
             $roomNameForUrl = (string) $selectedRoom['name'];
-            header('Location: booking.php?success=1&room=' . urlencode($roomNameForUrl) . '&arrival=' . urlencode($arrivalDate) . '&departure=' . urlencode($departureDate) . '#booking');
+
+            header(
+                'Location: booking.php?success=1'
+                    . '&room=' . urlencode($roomNameForUrl)
+                    . '&arrival=' . urlencode($arrivalDate)
+                    . '&departure=' . urlencode($departureDate)
+                    . '&total=' . urlencode((string) $totalCost)
+                    . '&features=' . urlencode($featuresForUrl)
+                    . '#booking'
+            );
             exit;
         } catch (Throwable $e) {
             if ($database->inTransaction()) {
@@ -353,18 +409,34 @@ require_once __DIR__ . '/src/header.php';
     <div class="booking-inner">
         <section class="booking-card" id="booking">
             <header class="booking-header">
-
-                <h2 id="booking-title" class="booking-title">Book a room</h2>
+                <h1 id="booking-title" class="booking-title">Book a room</h1>
                 <p class="booking-subtitle">Check-in 15:00 · Check-out 11:00 · January 2026</p>
             </header>
+
             <p class="field-hint">
-                1) Choose room, dates & features and click <strong>Calculate total</strong><br>
-                2) Create a transfer code in the Central Bank for that amount<br>
-                3) Enter your name + transfer code and click <strong>Confirm booking</strong><br>
+                - Choose room, dates & features and click <strong>Calculate total</strong><br>
+                - Create a transfer code in the Central Bank for that amount<br>
+                - Enter your name + transfer code and click <strong>Confirm booking</strong><br>
             </p>
 
             <?php if ($successMessage !== null) : ?>
-                <p role="status" class="notice notice-success"><?= escapeHtml($successMessage) ?></p>
+                <div class="modal is-open" id="successModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+                    <div class="modal-backdrop" data-close-modal></div>
+
+                    <div class="modal-card">
+                        <h3 id="modalTitle" class="modal-title">Booking confirmed!</h3>
+
+                        <p class="modal-text">
+                            <?= nl2br(escapeHtml($successMessage)) ?>
+                        </p>
+
+                        <div class="modal-actions">
+                            <button type="button" class="btn btn-primary" data-close-modal>
+                                Nice!
+                            </button>
+                        </div>
+                    </div>
+                </div>
             <?php endif; ?>
 
             <?php if ($errors !== []) : ?>
@@ -460,8 +532,16 @@ require_once __DIR__ . '/src/header.php';
                 </div>
 
                 <div class="actions">
-                    <button class="btn-primary" id="bookingButton" type="submit">Calculate total</button>
+                    <button class="btn-primary" id="bookingButton" type="submit">
+                        Calculate total
+                    </button>
 
+                    <a
+                        class="btn-secondary"
+                        href="https://www.yrgopelag.se/centralbank/"
+                        target="_blank">
+                        Get transfer code
+                    </a>
                 </div>
             </form>
 

@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const images = [
     "pictures/island-hero-1.png",
+    "pictures/palms.jpg",
     "pictures/Island-hero-3.png",
     "pictures/cozeaoverwiew.png",
     // "/pictures/island-hero-2.png",
@@ -62,4 +63,24 @@ document.addEventListener("DOMContentLoaded", () => {
   guestInput.addEventListener("input", updateButton);
   codeInput.addEventListener("input", updateButton);
   updateButton();
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const modal = document.getElementById("successModal");
+  if (!modal) return;
+
+  const closeModal = () => {
+    modal.classList.remove("is-open");
+  };
+
+  modal.addEventListener("click", (event) => {
+    const target = event.target;
+    if (target && target.hasAttribute("data-close-modal")) {
+      closeModal();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeModal();
+  });
 });

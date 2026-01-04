@@ -161,3 +161,228 @@
   background-color: var(--backgroundColorLight);
   color: var(--backgroundColorDark);
 }
+
+/* THE ISLAND PAGE */
+.island-page {
+  text-transform: none;
+}
+
+.island-hero {
+  min-height: 60vh;
+  background-image: url("../pictures/relaxroom.jpg");
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: grid;
+  place-items: center;
+  margin-top: 2rem;
+}
+
+.island-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.island-hero-overlay {
+  position: relative;
+  z-index: 1;
+  width: min(900px, 92vw);
+  background: rgba(255, 255, 255, 0.85);
+  padding: 3rem 2.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  text-align: center;
+}
+
+.island-hero-title {
+  margin: 0 0 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 400;
+  font-size: 2.6rem;
+}
+
+.island-hero-lead,
+.island-hero-sub {
+  margin: 0.75rem 0 0;
+  line-height: 1.7;
+}
+
+.island-hero-sub {
+  opacity: 0.8;
+  margin-top: 1rem;
+}
+
+.island-hero-cta {
+  display: inline-block;
+  margin-top: 1.75rem;
+  padding: 0.9rem 1.2rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: var(--textColorDark);
+  color: var(--textColorLight);
+  border: 1px solid var(--textColorDark);
+}
+
+.island-hero-cta:hover {
+  background: var(--backgroundColor);
+  color: var(--textColorDark);
+}
+
+.island-section-title {
+  text-align: center;
+  margin: 5rem auto 2rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.island-highlights {
+  width: min(1200px, 92vw);
+  margin: 0 auto;
+}
+
+.island-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.island-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  padding: 1.5rem;
+  text-transform: none;
+}
+
+.island-card-title {
+  margin: 0 0 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 1.1rem;
+}
+
+.island-card-text {
+  margin: 0;
+  line-height: 1.65;
+  opacity: 0.9;
+}
+
+.island-story {
+  width: min(1200px, 92vw);
+  margin: 4rem auto 0;
+  display: grid;
+  gap: 3rem;
+}
+
+.island-split {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 28px;
+  align-items: stretch;
+}
+
+.island-split--reverse {
+  grid-template-columns: 0.85fr 1.15fr;
+}
+
+.island-split-media {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  background: #fff;
+}
+
+.island-split-media img {
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+  object-fit: cover;
+  display: block;
+}
+
+.island-split-content {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 2rem;
+  text-transform: none;
+}
+
+.island-split-title {
+  margin: 0 0 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 1.4rem;
+}
+
+.island-split-text {
+  margin: 0 0 1rem;
+  line-height: 1.75;
+  opacity: 0.92;
+}
+
+.island-info {
+  height: 80vh;
+  margin: 4.5rem 0 2rem;
+  display: grid;
+  place-items: center;
+  padding: 3.5rem 1rem;
+  background-image: url("../pictures/coconut.jpg");
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.island-info-card {
+  position: relative;
+  z-index: 1;
+  width: min(820px, 92vw);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  padding: 2.25rem 2rem;
+  text-align: center;
+  text-transform: none;
+}
+
+.island-info-title {
+  margin: 0 0 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.island-info-text {
+  margin: 0 auto 1.25rem;
+  line-height: 1.7;
+  max-width: 55ch;
+}
+
+.island-info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto 1.5rem;
+  display: grid;
+  gap: 0.5rem;
+  max-width: 55ch;
+}
+
+.island-info-list li {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.island-info-cta {
+  display: inline-block;
+  padding: 0.9rem 1.2rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: var(--textColorDark);
+  color: var(--textColorLight);
+  border: 1px solid var(--textColorDark);
+}
+
+.island-info-cta:hover {
+  background: var(--backgroundColor);
+  color: var(--textColorDark);
+}
