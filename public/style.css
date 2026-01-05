@@ -22,7 +22,6 @@ body {
 }
 
 .header-top {
-  max-width: 1400px;
   margin: 0 auto;
   padding: 1rem 1.5rem 0;
   display: flex;
@@ -48,6 +47,7 @@ body {
   display: flex;
   gap: 1rem;
 }
+
 .header-rating {
   margin-top: 4px;
   font-size: 13px;
@@ -69,19 +69,19 @@ body {
 }
 
 .navbar-icon-image {
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
   display: block;
 }
 
 .header-brand {
   display: flex;
   justify-content: center;
-  margin-top: 0.75rem;
+  margin-bottom: 2%;
 }
 
 .header-logo {
-  width: 360px;
+  width: 450px;
   height: auto;
   display: block;
 }
@@ -89,7 +89,7 @@ body {
 .header-divider {
   border: none;
   border-top: 1px solid var(--textColorDark);
-  max-width: 90vw;
+  max-width: 95vw;
   margin: 1.5rem auto 0;
 }
 
@@ -104,7 +104,7 @@ body {
   list-style: none;
   display: flex;
   justify-content: center;
-  gap: 6rem;
+  gap: 10rem;
 }
 
 .navbar-item {
@@ -116,6 +116,7 @@ a:hover {
 }
 
 .navbar-text {
+  font-size: 1.1rem;
   letter-spacing: 0.6px;
   text-decoration: none;
   color: var(--textColorDark);
@@ -266,23 +267,24 @@ a:hover {
 .contact-newsletter {
   border-top: 1px solid #e6e6e6;
   padding: 28px 0;
+  margin-top: 4%;
 }
 
 .contact-block-title,
 .newsletter-block-title {
-  margin: 0 0 14px;
+  margin: 0 0 25px;
   font-size: 1.2rem;
   font-weight: 700;
   letter-spacing: 0.08em;
 }
 
 .contact-newsletter-inner {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 0 24px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 64px;
+  gap: 65px;
   align-items: start;
 }
 
@@ -356,12 +358,11 @@ a:hover {
 
 .footer {
   border-top: 1px solid var(--textColorDark);
-  max-width: 90vw;
+  max-width: 95vw;
   margin: 1.5rem auto 0;
 }
 
 .footer-content {
-  max-width: 1200px;
   margin: 0 auto;
   padding: 1.5rem;
   display: flex;

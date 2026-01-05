@@ -116,7 +116,7 @@ if ($isLoggedIn && isset($_POST['action']) && $_POST['action'] === 'save') {
             }
 
             $database->commit();
-            $success = 'Saved! Rating, room prices and features updated.';
+            $success = 'Saved! Rating, your changes has been updated.';
         } catch (Throwable $e) {
             if ($database->inTransaction()) {
                 $database->rollBack();

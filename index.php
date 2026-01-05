@@ -76,7 +76,7 @@ require __DIR__ . '/src/header.php';
     </section>
 
     <article class="intro-story">
-        <h2 class="intro-story-title">THE ISLAND OF COZEA</h2>
+        <h2 class="intro-story-title">Let us tell you a little bit of Cozea Island</h2>
 
         <p class="intro-story-text">
             Far from the mainland, surrounded by endless shades of turquoise, lies Cozea

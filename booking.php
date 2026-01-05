@@ -71,7 +71,6 @@ foreach ($bookings as $booking) {
     $arrival = new DateTime((string) $booking['arrival_date']);
     $departure = new DateTime((string) $booking['departure_date']);
 
-    // Make departure inclusive for the calendar
     $departure->modify('-1 day');
 
     $current = clone $arrival;
@@ -93,9 +92,6 @@ $featuresStatement = $database->query(
 );
 $features = $featuresStatement->fetchAll(PDO::FETCH_ASSOC);
 
-/**
- * Defaults for the form (so page works on first load)
- */
 $arrivalDate = '2026-01-01';
 $departureDate = '2026-01-02';
 $roomSlug = '';
@@ -103,10 +99,7 @@ $selectedFeatureIds = [];
 $totalCost = null;
 $nights = null;
 
-/**
- * SUCCESS (after redirect)
- * We keep the message text simple and safe.
- */
+
 if (isset($_GET['success']) && $_GET['success'] === '1') {
     $successRoom = isset($_GET['room']) ? (string) $_GET['room'] : '';
     $successArrival = isset($_GET['arrival']) ? (string) $_GET['arrival'] : '';
@@ -135,11 +128,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
     }
 }
 
-/**
- * POST (Calculate total OR Confirm booking)
- * - Always calculate total when room+dates are valid
- * - Only confirm booking when BOTH guest name + transfer code are filled in
- */
+
 if (isset($_POST['room_slug'], $_POST['arrival_date'], $_POST['departure_date'])) {
     $guestName = isset($_POST['guest_name']) ? trim((string) $_POST['guest_name']) : '';
     $transferCode = isset($_POST['transfer_code']) ? trim((string) $_POST['transfer_code']) : '';
@@ -154,7 +143,6 @@ if (isset($_POST['room_slug'], $_POST['arrival_date'], $_POST['departure_date'])
         $selectedFeatureIds = [];
     }
 
-    // Decide what the user is trying to do
     $wantsConfirmBooking = ($guestName !== '' && $transferCode !== '');
     $enteredOneButNotBoth = (($guestName !== '' && $transferCode === '') || ($guestName === '' && $transferCode !== ''));
 
@@ -166,7 +154,6 @@ if (isset($_POST['room_slug'], $_POST['arrival_date'], $_POST['departure_date'])
         $errors[] = 'Guest name cannot be the same as the hotel owner.';
     }
 
-    // Date rules
     if ($arrivalDate < '2026-01-01' || $arrivalDate > '2026-01-31') {
         $errors[] = 'Arrival date must be within January 2026.';
     }
@@ -179,7 +166,6 @@ if (isset($_POST['room_slug'], $_POST['arrival_date'], $_POST['departure_date'])
         $errors[] = 'Departure must be after arrival.';
     }
 
-    // Find selected room
     $selectedRoom = null;
     foreach ($rooms as $room) {
         if ((string) $room['slug'] === $roomSlug) {
@@ -192,7 +178,6 @@ if (isset($_POST['room_slug'], $_POST['arrival_date'], $_POST['departure_date'])
         $errors[] = 'Please choose a room.';
     }
 
-    // Availability check (useful for both calculating and confirming)
     if ($errors === [] && $selectedRoom !== null) {
         $checkStatement = $database->prepare('
             SELECT COUNT(*)
@@ -214,7 +199,6 @@ if (isset($_POST['room_slug'], $_POST['arrival_date'], $_POST['departure_date'])
         }
     }
 
-    // Calculate total cost
     if ($errors === [] && $selectedRoom !== null) {
         $arrival = new DateTime($arrivalDate);
         $departure = new DateTime($departureDate);
@@ -232,7 +216,6 @@ if (isset($_POST['room_slug'], $_POST['arrival_date'], $_POST['departure_date'])
         $totalCost = ($roomPricePerNight + $featuresCostPerNight) * $nights;
     }
 
-    // If user wants to confirm, validate transfer code
     if ($errors === [] && $wantsConfirmBooking && $selectedRoom !== null && $totalCost !== null) {
         $validation = centralbankValidateTransferCode($transferCode, $totalCost);
 
@@ -247,7 +230,6 @@ if (isset($_POST['room_slug'], $_POST['arrival_date'], $_POST['departure_date'])
         }
     }
 
-    // Confirm booking (only when the user truly tries to confirm)
     if ($errors === [] && $wantsConfirmBooking && $selectedRoom !== null && $totalCost !== null) {
         $database->beginTransaction();
 
@@ -283,7 +265,6 @@ if (isset($_POST['room_slug'], $_POST['arrival_date'], $_POST['departure_date'])
                 }
             }
 
-            // Receipt payload for central bank
             $featuresUsed = [];
             foreach ($features as $feature) {
                 if (in_array((int) $feature['id'], $selectedFeatureIds, true)) {
@@ -305,7 +286,6 @@ if (isset($_POST['room_slug'], $_POST['arrival_date'], $_POST['departure_date'])
             );
 
             if (!$receipt['ok']) {
-                // Non-blocking
                 error_log('Receipt failed (non-blocking): ' . (string) ($receipt['error'] ?? 'Unknown error'));
             }
 
@@ -317,7 +297,6 @@ if (isset($_POST['room_slug'], $_POST['arrival_date'], $_POST['departure_date'])
 
             $database->commit();
 
-            // Build features list for the popup (optional)
             $selectedFeatureNames = [];
             foreach ($features as $feature) {
                 if (in_array((int) $feature['id'], $selectedFeatureIds, true)) {

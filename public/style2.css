@@ -168,7 +168,7 @@
 }
 
 .island-hero {
-  min-height: 60vh;
+  min-height: 70vh;
   background-image: url("../pictures/relaxroom.jpg");
   background-size: cover;
   background-position: center;
@@ -176,13 +176,6 @@
   display: grid;
   place-items: center;
   margin-top: 2rem;
-}
-
-.island-hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
 }
 
 .island-hero-overlay {
@@ -258,7 +251,6 @@
 
 .island-card-title {
   margin: 0 0 0.75rem;
-  text-transform: uppercase;
   letter-spacing: 0.06em;
   font-size: 1.1rem;
 }

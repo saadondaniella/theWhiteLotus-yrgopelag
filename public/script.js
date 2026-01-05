@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "pictures/palms.jpg",
     "pictures/Island-hero-3.png",
     "pictures/cozeaoverwiew.png",
-    // "/pictures/island-hero-2.png",
+    "pictures/water.jpg",
   ];
 
   let currentIndex = 0;
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
       heroImage.src = images[currentIndex];
       heroImage.style.opacity = "1";
     }, 700);
-  }, 4000);
+  }, 3000);
 });
 
 document.addEventListener("DOMContentLoaded", () => {
