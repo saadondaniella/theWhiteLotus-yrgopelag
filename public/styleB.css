@@ -296,6 +296,23 @@ select.field-control {
   margin-left: 0.25rem;
 }
 
+.features1-meta {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-left: 0.5rem;
+}
+
+.tier-badge {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.45rem;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  opacity: 0.85;
+  background: rgba(255, 255, 255, 0.6);
+}
+
 .actions {
   margin-top: 2.5rem;
   display: flex;
@@ -387,4 +404,47 @@ select.field-control {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
+}
+
+/* === Special Offer Box === */
+
+.offer-box {
+  margin-top: 2.5rem;
+  padding: 2.5rem 2rem;
+  background-color: var(--accentColor);
+  background-size: cover;
+  background-position: center;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  position: relative;
+}
+
+.offer-box::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.offer-box-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.offer-title {
+  margin: 0 0 1rem;
+  font-size: 1.4rem;
+  letter-spacing: 0.06em;
+}
+
+.offer-text {
+  margin: 0 0 0.75rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  text-transform: none;
+}
+
+.offer-note {
+  font-size: 1rem;
+  opacity: 0.7;
+  text-transform: none;
 }

@@ -6,7 +6,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use GuzzleHttp\Client;
 
-const CENTRALBANK_BASE_URL = 'https://yrgopelag.se/centralbank/';
+const CENTRALBANK_BASE_URL = 'https://yrgopelag.se/centralbank';
 
 function centralbankPost(string $endpoint, array $payload): array
 {
@@ -75,14 +75,7 @@ function centralbankValidateTransferCode(string $transferCode, int $totalCost): 
     ]);
 }
 
-function centralbankDeposit(string $hotelOwnerUser, string $apiKey, string $transferCode): array
-{
-    return centralbankPost('deposit', [
-        'user' => $hotelOwnerUser,
-        'api_key' => $apiKey,
-        'transferCode' => $transferCode,
-    ]);
-}
+
 
 function centralbankSendReceipt(
     string $user,

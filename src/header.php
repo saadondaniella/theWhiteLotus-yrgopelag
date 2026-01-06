@@ -64,7 +64,7 @@ require_once __DIR__ . '/../config.php';
             <ul class="navbar-list">
                 <li class="navbar-item"><a class="navbar-text" href="index.php">DESTINATION</a></li>
                 <li class="navbar-item"><a class="navbar-text" href="booking.php">ROOMS</a></li>
-                <li class="navbar-item"><a class="navbar-text" href="theIsland.php">THE ISLAND</a></li>
+                <li class="navbar-item"><a class="navbar-text" href="theisland.php">THE ISLAND</a></li>
                 <li class="navbar-item"><a class="navbar-text" href="contact.php">CONTACT</a></li>
                 <li class="navbar-item"><a class="navbar-text" href="features.php">FEATURES</a></li>
             </ul>

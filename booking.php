@@ -10,6 +10,11 @@ require_once __DIR__ . '/config.php';
 $errors = [];
 $successMessage = null;
 
+$discountPercent = 0;
+$discountAmount = 0;
+$discountLabel = null;
+
+
 if ($centralBankApiKey === false || $centralBankApiKey === '') {
     $errors[] = 'Hotel configuration error: API key is missing.';
 }
@@ -120,7 +125,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             $lines[] = 'Features: ' . $successFeatures . '.';
         }
 
-        $lines[] = 'Your journey begins now. 🌴';
+        $lines[] = 'Welcome to The White Lotus 🌴';
 
         $successMessage = implode("\n", $lines);
     } else {
@@ -214,7 +219,51 @@ if (isset($_POST['room_slug'], $_POST['arrival_date'], $_POST['departure_date'])
         }
 
         $totalCost = ($roomPricePerNight + $featuresCostPerNight) * $nights;
+
+        $tiersWithActivities = [];
+
+        foreach ($features as $feature) {
+            $featureId = (int) $feature['id'];
+
+            if (!in_array($featureId, $selectedFeatureIds, true)) {
+                continue;
+            }
+
+            $tier = (string) $feature['tier'];
+            $activity = (string) $feature['activity'];
+
+            if (!isset($tiersWithActivities[$tier])) {
+                $tiersWithActivities[$tier] = [];
+            }
+
+            $tiersWithActivities[$tier][$activity] = true;
+        }
+
+        $requiredActivities = ['water', 'games', 'wheels', 'hotel-specific'];
+
+        foreach ($tiersWithActivities as $tier => $activitiesMap) {
+            $hasFullTier = true;
+
+            foreach ($requiredActivities as $requiredActivity) {
+                if (!isset($activitiesMap[$requiredActivity])) {
+                    $hasFullTier = false;
+                    break;
+                }
+            }
+
+            if ($hasFullTier) {
+                $discountPercent = 20;
+                $discountLabel = 'Tier Collector (20% off)';
+                break;
+            }
+        }
+
+        if ($discountPercent > 0 && $totalCost !== null) {
+            $discountAmount = (int) round($totalCost * ($discountPercent / 100));
+            $totalCost = max(0, $totalCost - $discountAmount);
+        }
     }
+
 
     if ($errors === [] && $wantsConfirmBooking && $selectedRoom !== null && $totalCost !== null) {
         $validation = centralbankValidateTransferCode($transferCode, $totalCost);
@@ -289,7 +338,8 @@ if (isset($_POST['room_slug'], $_POST['arrival_date'], $_POST['departure_date'])
                 error_log('Receipt failed (non-blocking): ' . (string) ($receipt['error'] ?? 'Unknown error'));
             }
 
-            $deposit = centralbankDeposit((string) $hotelOwnerUser, (string) $centralBankApiKey, $transferCode);
+            $deposit = centralbankDeposit((string) $hotelOwnerUser, $transferCode);
+
 
             if (!$deposit['ok']) {
                 throw new RuntimeException('Deposit failed: ' . (string) ($deposit['error'] ?? 'Unknown error'));
@@ -488,7 +538,7 @@ require_once __DIR__ . '/src/header.php';
 
                 <div class="features1">
                     <h3 class="features1-title">
-                        Choose island features.<br> The more you dare, the more tourist points you may collect in the showdown.
+                        Choose island features
                     </h3>
 
                     <div class="features1-grid">
@@ -503,12 +553,31 @@ require_once __DIR__ . '/src/header.php';
                                     <?= in_array($id, $selectedFeatureIds, true) ? 'checked' : '' ?>>
                                 <span class="features1-text">
                                     <?= escapeHtml((string) $feature['name']) ?>
-                                    <span class="features1-price">(<?= (int) $feature['cost'] ?> €)</span>
+                                    <span class="features1-meta">
+                                        <span class="tier-badge tier-badge--<?= escapeHtml((string) $feature['tier']) ?>">
+                                            <?= escapeHtml((string) $feature['tier']) ?>
+                                        </span>
+                                        <span class="features1-price">(<?= (int) $feature['cost'] ?> €)</span>
+                                    </span>
                                 </span>
+
                             </label>
                         <?php endforeach; ?>
                     </div>
                 </div>
+                <section class="offer-box">
+                    <div class="offer-box-inner">
+                        <h3 class="offer-title">Collector’s Offer</h3>
+
+                        <p class="offer-text">
+                            Collect a full tier set: one feature from each category in the same tier — and receive 20% off your total stay.
+                        </p>
+
+                        <p class="offer-note">
+                            The discount is applied automatically when the conditions are met.
+                        </p>
+                    </div>
+                </section>
 
                 <div class="actions">
                     <button class="btn-primary" id="bookingButton" type="submit">
@@ -527,11 +596,23 @@ require_once __DIR__ . '/src/header.php';
             <?php if ($totalCost !== null && $nights !== null) : ?>
                 <section class="summary" aria-label="Booking summary">
                     <h3 class="summary-title">Summary</h3>
+
                     <dl class="summary-list">
                         <div class="summary-row">
                             <dt>Nights</dt>
                             <dd><?= (int) $nights ?></dd>
                         </div>
+
+                        <?php if ($discountPercent > 0) : ?>
+                            <div class="summary-row">
+                                <dt>Discount</dt>
+                                <dd>
+                                    <?= escapeHtml((string) $discountLabel) ?>
+                                    −<?= (int) $discountAmount ?> €
+                                </dd>
+                            </div>
+                        <?php endif; ?>
+
                         <div class="summary-row">
                             <dt>Total cost</dt>
                             <dd><?= (int) $totalCost ?> €</dd>
@@ -539,6 +620,7 @@ require_once __DIR__ . '/src/header.php';
                     </dl>
                 </section>
             <?php endif; ?>
+
         </section>
     </div>
 </section>
