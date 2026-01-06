@@ -75,7 +75,13 @@ function centralbankValidateTransferCode(string $transferCode, int $totalCost): 
     ]);
 }
 
-
+function centralbankDeposit(string $hotelOwnerUser, string $transferCode): array
+{
+    return centralbankPost('deposit', [
+        'user' => $hotelOwnerUser,
+        'transferCode' => $transferCode,
+    ]);
+}
 
 function centralbankSendReceipt(
     string $user,
