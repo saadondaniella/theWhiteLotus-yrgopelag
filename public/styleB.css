@@ -187,12 +187,6 @@
   margin: 0;
 }
 
-.booking-subtitle {
-  font-size: 1rem;
-  margin-top: 4%;
-  opacity: 0.7;
-}
-
 .notice {
   font-size: 1rem;
   margin: 1rem 0;
@@ -406,7 +400,7 @@ select.field-control {
   flex-wrap: wrap;
 }
 
-/* === Special Offer Box === */
+/* === Offer Box === */
 
 .offer-box {
   margin-top: 2.5rem;

@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  const heroImage = document.querySelector(".hero-image-img");
+  const heroImage = document.querySelector(".hero-bg");
 
   if (!heroImage) {
     return;
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const images = [
     "pictures/island-hero-1.png",
     "pictures/palms.jpg",
-    "pictures/Island-hero-3.png",
+    "pictures/coconut.jpg",
     "pictures/cozeaoverwiew.png",
     "pictures/water.jpg",
   ];

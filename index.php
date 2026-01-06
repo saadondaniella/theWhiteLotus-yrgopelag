@@ -30,25 +30,27 @@ require __DIR__ . '/src/header.php';
 
 <main>
     <section class="hero">
-        <div class="hero-content">
+        <img
+            class="hero-bg"
+            src="pictures/island-hero-1.png"
+            alt="Cozea Island">
+
+        <div class="hero-box">
             <h1 class="hero-title">WELCOME TO COZEA ISLAND</h1>
 
             <p class="hero-text">
-                Home to the exclusive resort The White Lotus. <br>An island of beauty, secrets, and unexpected turns — where paradise reveals
-                more than you came for.<br />
+                Home to the exclusive resort The White Lotus.<br>
+                An island of beauty, secrets, and unexpected turns — where paradise reveals
+                more than you came for.<br>
                 Book, if you dare.
             </p>
+
             <a class="room-button hero-cta" href="booking.php">
-                CHECK AVAILABLE ROOMS
+                → CHECK AVAILABLE ROOMS
             </a>
         </div>
-        <div class="hero-image">
-            <img
-                class="hero-image-img"
-                src="pictures/island-hero-1.png"
-                alt="Cozea Island">
-        </div>
     </section>
+
     <section class="rooms">
         <h2 class="rooms-title">OUR ROOMS</h2>
 

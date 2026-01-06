@@ -95,6 +95,7 @@ $featuresStatement = $database->query(
      WHERE is_active = 1
      ORDER BY cost ASC'
 );
+
 $features = $featuresStatement->fetchAll(PDO::FETCH_ASSOC);
 
 $arrivalDate = '2026-01-01';
@@ -340,7 +341,6 @@ if (isset($_POST['room_slug'], $_POST['arrival_date'], $_POST['departure_date'])
 
             $deposit = centralbankDeposit((string) $hotelOwnerUser, $transferCode);
 
-
             if (!$deposit['ok']) {
                 throw new RuntimeException('Deposit failed: ' . (string) ($deposit['error'] ?? 'Unknown error'));
             }
@@ -439,7 +439,6 @@ require_once __DIR__ . '/src/header.php';
         <section class="booking-card" id="booking">
             <header class="booking-header">
                 <h1 id="booking-title" class="booking-title">Book a room</h1>
-                <p class="booking-subtitle">Check-in 15:00 · Check-out 11:00 · January 2026</p>
             </header>
 
             <p class="field-hint">
