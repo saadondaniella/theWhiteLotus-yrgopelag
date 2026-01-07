@@ -140,6 +140,13 @@ $rooms = $database->query(
      ORDER BY price_per_night ASC'
 )->fetchAll();
 
+$bookings = $database->query(
+    'SELECT guest_name, room_id, arrival_date, departure_date, total_cost, created_at
+     FROM bookings
+     ORDER BY created_at DESC'
+)->fetchAll(PDO::FETCH_ASSOC);
+
+
 $currentRating = (int) $hotelRating;
 
 require __DIR__ . '/src/header.php';
@@ -258,8 +265,44 @@ require __DIR__ . '/src/header.php';
                     <button class="btn-primary" type="submit" style="opacity:0.85;">Logout</button>
                 </form>
             <?php endif; ?>
+            <?php if ($isLoggedIn) : ?>
+                <section class="booking-card" style="max-width: 60rem; margin-top: 3rem;">
+                    <header class="booking-header">
+                        <h2 class="booking-title">Bookings</h2>
+                    </header>
+
+                    <?php if ($bookings === []) : ?>
+                        <p>No bookings yet.</p>
+                    <?php else : ?>
+                        <table style="width:100%; border-collapse: collapse;">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:left; padding:8px;">Guest</th>
+                                    <th style="text-align:left; padding:8px;">Room ID</th>
+                                    <th style="text-align:left; padding:8px;">Arrival</th>
+                                    <th style="text-align:left; padding:8px;">Departure</th>
+                                    <th style="text-align:left; padding:8px;">Total (€)</th>
+                                    <th style="text-align:left; padding:8px;">Created</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($bookings as $booking) : ?>
+                                    <tr>
+                                        <td style="padding:8px;"><?= escapeHtml((string) $booking['guest_name']) ?></td>
+                                        <td style="padding:8px;"><?= (int) $booking['room_id'] ?></td>
+                                        <td style="padding:8px;"><?= escapeHtml((string) $booking['arrival_date']) ?></td>
+                                        <td style="padding:8px;"><?= escapeHtml((string) $booking['departure_date']) ?></td>
+                                        <td style="padding:8px;"><?= (int) $booking['total_cost'] ?></td>
+                                        <td style="padding:8px;"><?= escapeHtml((string) $booking['created_at']) ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php endif; ?>
+                </section>
+            <?php endif; ?>
         </section>
-    </div>
 </section>
+</div>
 
 <?php require __DIR__ . '/src/footer.php'; ?>
