@@ -50,6 +50,26 @@ require __DIR__ . '/src/header.php';
             </a>
         </div>
     </section>
+    <section class="promo-split">
+        <div class="promo-split-image">
+            <img
+                src="pictures/relaxroom.jpg"
+                alt="Cozea Island experience">
+        </div>
+
+        <div class="promo-split-content">
+            <h2 class="promo-split-title">STAY LONGER. SCORE MORE.</h2>
+
+            <p class="promo-split-text">
+                Combine a <strong>3-night stay</strong> with a
+                <strong>full tier set</strong> from 24 € total. Yes, there’s a discount.
+            </p>
+
+            <a class="room-button promo-split-cta" href="booking.php">
+                → Build your stay
+            </a>
+        </div>
+    </section>
 
     <section class="rooms">
         <h2 class="rooms-title">OUR ROOMS</h2>

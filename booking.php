@@ -566,7 +566,7 @@ require_once __DIR__ . '/src/header.php';
                 </div>
                 <section class="offer-box">
                     <div class="offer-box-inner">
-                        <h3 class="offer-title">Collector’s Offer</h3>
+                        <h3 class="offer-title">20% off with Collector’s Offer</h3>
 
                         <p class="offer-text">
                             Collect a full tier set: one feature from each category in the same tier — and receive 20% off your total stay.
