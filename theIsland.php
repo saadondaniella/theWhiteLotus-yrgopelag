@@ -69,6 +69,21 @@ require __DIR__ . '/src/header.php';
             </div>
         </article>
 
+        <article class="island-split">
+            <div class="island-split-media">
+                <img src="pictures/girl.jpg" alt="girl at the beach on Cozea Island">
+            </div>
+            <div class="island-split-content">
+                <h2 class="island-split-title">THE SECRET</h2>
+                <p class="island-split-text">
+                    People come here for peace. But Cozea has a habit of revealing what you try to hide.
+                    Beauty always comes with a price — and the island never forgets.
+                </p>
+                <p class="island-split-text">
+                    Some guests return home lighter. Others return… different.
+                </p>
+            </div>
+        </article>
         <article class="island-split island-split--reverse">
             <div class="island-split-media">
                 <img src="pictures/cozeaoverwiew.png" alt="Island overview of Cozea">
@@ -85,21 +100,6 @@ require __DIR__ . '/src/header.php';
             </div>
         </article>
 
-        <article class="island-split">
-            <div class="island-split-media">
-                <img src="pictures/girl.jpg" alt="girl at the beach on Cozea Island">
-            </div>
-            <div class="island-split-content">
-                <h2 class="island-split-title">THE SECRET</h2>
-                <p class="island-split-text">
-                    People come here for peace. But Cozea has a habit of revealing what you try to hide.
-                    Beauty always comes with a price — and the island never forgets.
-                </p>
-                <p class="island-split-text">
-                    Some guests return home lighter. Others return… different.
-                </p>
-            </div>
-        </article>
     </section>
 
     <section class="island-info" aria-label="January travel info">

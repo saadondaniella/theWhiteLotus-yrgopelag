@@ -104,7 +104,7 @@ body {
   list-style: none;
   display: flex;
   justify-content: center;
-  gap: 10rem;
+  gap: 7rem;
 }
 
 .navbar-item {
@@ -173,8 +173,9 @@ a:hover {
 }
 
 .promo-split {
-  width: min(1100px, 92vw);
-  margin: 4rem auto;
+  width: 85vw;
+  margin: auto;
+  padding-top: 6%;
   display: grid;
   grid-template-columns: 1.15fr 1fr;
   gap: 2.5rem;
@@ -218,6 +219,7 @@ a:hover {
   line-height: 1.7;
   text-transform: none;
   max-width: 46ch;
+  font-size: 1.1rem;
 }
 
 .promo-split-cta {
