@@ -48,6 +48,27 @@ if (!$isLoggedIn && isset($_POST['action']) && $_POST['action'] === 'login') {
         exit;
     }
 }
+if ($isLoggedIn && isset($_POST['action']) && $_POST['action'] === 'reset_bookings') {
+    try {
+        $database->beginTransaction();
+
+        // Ta bort kopplingar först (FK-säkert)
+        $database->exec('DELETE FROM booking_features');
+        $database->exec('DELETE FROM bookings');
+
+        // (Valfritt) nollställ autoincrement för bookings i SQLite
+        $database->exec("DELETE FROM sqlite_sequence WHERE name = 'bookings'");
+
+        $database->commit();
+        $success = 'All bookings have been cleared.';
+    } catch (Throwable $e) {
+        if ($database->inTransaction()) {
+            $database->rollBack();
+        }
+        error_log('Reset bookings error: ' . $e->getMessage());
+        $errors[] = 'Could not clear bookings. Please try again.';
+    }
+}
 
 if ($isLoggedIn && isset($_POST['action']) && $_POST['action'] === 'save') {
     $newRating = isset($_POST['hotel_rating']) ? (int) $_POST['hotel_rating'] : 3;
@@ -265,12 +286,23 @@ require __DIR__ . '/src/header.php';
                     <button class="btn-primary" type="submit" style="opacity:0.85;">Logout</button>
                 </form>
             <?php endif; ?>
+
             <?php if ($isLoggedIn) : ?>
                 <section class="booking-card" style="max-width: 60rem; margin-top: 3rem;">
                     <header class="booking-header">
                         <h2 class="booking-title">Bookings</h2>
                     </header>
 
+                    <form method="post" style="margin-top: 1rem;">
+                        <input type="hidden" name="action" value="reset_bookings">
+                        <button
+                            class="btn-primary"
+                            type="submit"
+                            style="opacity:0.85;"
+                            onclick="return confirm('Clear ALL bookings? This cannot be undone.');">
+                            Reset bookings
+                        </button>
+                    </form>
                     <?php if ($bookings === []) : ?>
                         <p>No bookings yet.</p>
                     <?php else : ?>
