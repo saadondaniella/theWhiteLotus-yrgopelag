@@ -52,11 +52,9 @@ if ($isLoggedIn && isset($_POST['action']) && $_POST['action'] === 'reset_bookin
     try {
         $database->beginTransaction();
 
-        // Ta bort kopplingar först (FK-säkert)
         $database->exec('DELETE FROM booking_features');
         $database->exec('DELETE FROM bookings');
 
-        // (Valfritt) nollställ autoincrement för bookings i SQLite
         $database->exec("DELETE FROM sqlite_sequence WHERE name = 'bookings'");
 
         $database->commit();
