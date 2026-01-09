@@ -81,3 +81,18 @@ HOTEL_OWNER_USER=your_hotel_username
 - HTML and CSS
 - JavaScript (minimal usage)
 - Central Bank API
+
+## Code review from Hanna
+index.php: 10-15 - You could save images in database to make it more dynamic, than rewriting the code
+
+index.php: 19-26 - Another way is to skip making an array and use the database query response directly in the code for displaying the rooms on line 78-95.
+
+theisland.php: 11 - You could save island-info as the name in this case in database or as saved array to require to reuse throughout the project, for easier update if some info changes.
+
+features.php: 5-6 - you could have an autoload in your project to require files that needs to be used through the whole project
+
+features.php: 8-38 - you could save the array in database to maybe make it more dynamic if some or all info changes to make it simpler to update
+
+Contact.php: 5 - you could use $_SESSION to save errors and such if you use sessionstart() in your project
+
+Root: you could put some of the root files in own directory, ex contact.php, theisland.php, features.php, you could put config in 
